@@ -10,690 +10,732 @@
   <script>
     // ✅ 新的 Pixel ID
     const FB_PIXEL_ID = "1879609856327374";
-    // ✅ Google Apps Script Web App URL（如果你之後再重新部署，要一起更新）
+    // ✅ Google Apps Script Web App URL（之後重新部署要一起更新）
     const ORDER_API_ENDPOINT = "https://script.google.com/macros/s/AKfycbzkEQpk9t5v8fZoqwYR3hM8CESuECYQuM6CBqrk6UdmwiN_IdochhO51hec3eRBszLFtA/exec";
   </script>
 
   <!-- 主邏輯（語系、商品、購物車、送單 + eventId） -->
   <script>
-  // === 多語系字串 ===
-  const I18N = {
-    en: {
-      'brand.name': 'North America Lifestyle Mall',
-
-      'ribbon.main': '🎁 New users enjoy a $50 welcome voucher. It will be applied automatically at checkout and can be redeemed once per customer.',
-      'ribbon.sub': 'Start your curated shopping journey with factory-direct deals and exclusive offers.',
-      'ribbon.online': '👥 Shoppers online: <span id="onlineCount">--</span>',
-      'ribbon.claimed': '🔔 Vouchers claimed today: <span id="claimCount">--</span>',
-
-      'hero.title': 'Your lifestyle, your rewards.',
-      'hero.sub': 'Every week we release new limited-time deals. All products are sourced directly from partner factories and brands, cutting out middlemen so you pay less. Feel free to compare prices — we let real discounts speak for themselves.',
-
-      'products.heading': 'Featured Picks',
-
-      'cat.home': 'Home Decor',
-      'cat.gaming': 'Gaming Zone',
-      'cat.appliance': 'Home Appliances',
-      'cat.outdoor': 'Outdoor Picks',
-
-      'btn.addToCart': 'Add to Cart',
-
-      'cart.title': 'Your Cart',
-      'cart.empty': 'No items yet. Add products to your cart.',
-      'cart.total': 'Total',
-      'cart.checkout': 'Checkout',
-      'cart.clear': 'Clear',
-      'cart.hint': 'At checkout, a $50 welcome voucher will be applied automatically for first-time users.',
-
-      'checkout.title': 'Order & Delivery Details',
-      'checkout.selection': 'Your selection',
-      'checkout.subtotal': 'Subtotal',
-      'checkout.voucher': 'Voucher (up to $50 off)',
-      'checkout.final': 'Final amount',
-      'checkout.note': 'The voucher is applied automatically. You enjoy <strong>use now, pay later</strong> with a 7-day trial period — if you\'re not satisfied, we can help with returns.',
-
-      'form.fullNameLabel': 'Full Name / Name (must be the buyer)',
-      'form.emailLabel': 'Email Address',
-      'form.phoneLabel': 'Mobile Phone',
-      'form.addressLabel': 'Delivery Address',
-      'form.noteLabel': 'Notes (optional)',
-      'form.noteBlock': 'Please make sure to fill in your own real name, email, phone number and address. Returns and refunds can only be processed after verifying your personal information to protect your rights. We offer <strong>use now, pay later</strong> and a <strong>7-day trial period</strong>. Your information is used only for this order and customer support, and will not be shared publicly.',
-      'form.submit': 'Submit Order',
-      'form.back': 'Back to Cart',
-
-      'ph.fullName': 'Please enter your full name',
-      'ph.email': 'example@email.com',
-      'ph.phone': 'e.g. +1 555 123 4567',
-      'ph.address': 'Street, city, state, ZIP',
-      'ph.note': 'e.g. preferred delivery time or building access info',
-
-      'footer.textPrefix': '© <span id="year"></span> North America Lifestyle Mall',
-
-      'modal.confirm.title': 'Please confirm your information',
-      'modal.confirm.body': 'Please confirm that all information you filled in (name, email, phone and address) belongs to you. Returns and refunds can only be processed after verifying the buyer\'s personal information to protect your rights.',
-      'modal.confirm.confirmBtn': 'Yes, this is my information',
-      'modal.confirm.editBtn': 'Edit information',
-
-      'modal.success.title': 'Order submitted successfully',
-      'modal.success.body': 'Your order has been successfully submitted. We will email your detailed order information within 1–3 business days for confirmation.',
-      'modal.success.okBtn': 'OK',
-
-      'alert.cartEmpty': 'Your cart is empty, please add items first.',
-      'alert.missingFields': 'Please fill in your name, email, phone and delivery address.',
-      'alert.networkError': 'Submission failed. Please try again later or contact us for assistance.'
-    },
-    zh: {
-      'brand.name': '北美生活优选商城',
-
-      'ribbon.main': '🎁 新用户享有 $50 欢迎优惠券，在购物车结账时自动折抵，每位用户限领一次。',
-      'ribbon.sub': '开启你的精选购物之旅，所有商品由合作工厂直供，价格透明欢迎比价。',
-      'ribbon.online': '👥 当前在线购物人数：<span id="onlineCount">--</span>',
-      'ribbon.claimed': '🔔 今日已领取优惠券：<span id="claimCount">--</span>',
-
-      'hero.title': '你的生活方式，你的专属回馈',
-      'hero.sub': '每周都会有新的优惠产品释出，所有商品皆由合作工厂与品牌直供，少了中间通路成本，价格更实在。欢迎你多方比价，我们用真实折扣说话。',
-
-      'products.heading': '精选好物推荐',
-
-      'cat.home': '家居装饰',
-      'cat.gaming': '电竞专区',
-      'cat.appliance': '家电精选',
-      'cat.outdoor': '户外专区',
-
-      'btn.addToCart': '加入购物车',
-
-      'cart.title': '购物车',
-      'cart.empty': '购物车目前为空，请先加入商品。',
-      'cart.total': '合计',
-      'cart.checkout': '去结账',
-      'cart.clear': '清空',
-      'cart.hint': '结账时，新用户的 $50 欢迎优惠券会自动折抵，仅限领取一次。',
-
-      'checkout.title': '订单与配送资讯',
-      'checkout.selection': '您的选择',
-      'checkout.subtotal': '小计',
-      'checkout.voucher': '优惠券（最高减 $50）',
-      'checkout.final': '应付金额',
-      'checkout.note': '系统会自动套用优惠券，您享有<strong>先使用后付款</strong>与<strong>7 天试用期</strong>，如不满意我们可协助退货。',
-
-      'form.fullNameLabel': 'Full Name / 姓名（须为购买人本人）',
-      'form.emailLabel': 'Email Address / 电子邮箱',
-      'form.phoneLabel': 'Mobile Phone / 手机号码',
-      'form.addressLabel': 'Delivery Address / 收货地址',
-      'form.noteLabel': 'Notes（选填）/ 备注',
-      'form.noteBlock': '请务必填写<b>本人真实姓名、电子邮箱、手机号码与收货地址</b>，退货与退款仅能以购买者本人资料办理，以保障您的权益。我们提供<strong>先使用后付款</strong>与<strong>7 天试用期</strong>，您的资讯仅用于本次订单与客服联络，不会对外公开。',
-      'form.submit': '提交订单',
-      'form.back': '返回购物车',
-
-      'ph.fullName': '请填写您的姓名',
-      'ph.email': '请输入常用电子邮箱',
-      'ph.phone': '请填写本人手机号码',
-      'ph.address': '详细收货地址（街道／城市／州／邮编）',
-      'ph.note': '例如：希望送达时间、门禁或大楼出入说明',
-
-      'footer.textPrefix': '© <span id="year"></span> 北美生活优选商城',
-
-      'modal.confirm.title': '确认是否为本人资讯',
-      'modal.confirm.body': '请再次确认您填写的姓名、邮箱、手机与收货地址均为本人真实资讯。如需办理退货或退款，仅能以购买者本人资料进行核对，以保障您的权益。',
-      'modal.confirm.confirmBtn': '确认以上资讯为本人',
-      'modal.confirm.editBtn': '返回修改资料',
-
-      'modal.success.title': '订单已成功送出',
-      'modal.success.body': '您的订单已成功提交，我们会在 1–3 个工作天内，将订单明细发送至您的电子邮箱以供确认。',
-      'modal.success.okBtn': '我知道了',
-
-      'alert.cartEmpty': '购物车目前为空，请先加入商品。',
-      'alert.missingFields': '请完整填写姓名、电子邮箱、手机号码与收货地址。',
-      'alert.networkError': '提交失败，请稍后再试或联系客户服务协助。'
-    }
-  };
-
-  let currentLang = 'en';
-  let currentCategory = 'home';
-  let isSubmittingOrder = false;
-  let currentPurchaseEventId = null; // 用來記錄這次訂單的 event_id
-
-  // 產生去重用的 event_id
-  function generateEventId(){
-    return 'ev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2,10);
+// === 多語系字串 ===
+const I18N = {
+  en: {
+    'brand.name': 'North America Lifestyle Mall',
+    'ribbon.main': '🎁 New users enjoy a $50 welcome voucher. It will be applied automatically at checkout and can be redeemed once per customer.',
+    'ribbon.sub': 'Start your curated shopping journey with factory-direct deals and exclusive offers.',
+    'ribbon.online': '👥 Shoppers online: <span id="onlineCount">--</span>',
+    'ribbon.claimed': '🔔 Vouchers claimed today: <span id="claimCount">--</span>',
+    'hero.title': 'Your lifestyle, your rewards.',
+    'hero.sub': 'Every week we release new limited-time deals. All products are sourced directly from partner factories and brands, cutting out middlemen so you pay less. Feel free to compare prices — we let real discounts speak for themselves.',
+    'products.heading': 'Featured Picks',
+    'cat.gaming': 'Gaming Zone',
+    'cat.appliance': 'Home Appliances',
+    'btn.addToCart': 'Add to Cart',
+    'cart.title': 'Your Cart',
+    'cart.empty': 'No items yet. Add products to your cart.',
+    'cart.total': 'Total',
+    'cart.checkout': 'Checkout',
+    'cart.clear': 'Clear',
+    'cart.hint': 'At checkout, a $50 welcome voucher will be applied automatically for first-time users.',
+    'checkout.title': 'Order & Delivery Details',
+    'checkout.selection': 'Your selection',
+    'checkout.subtotal': 'Subtotal',
+    'checkout.voucher': 'Voucher (up to $50 off)',
+    'checkout.final': 'Final amount',
+    'checkout.note': 'The voucher is applied automatically. You enjoy <strong>use now, pay later</strong> with a 7-day trial period — if you\'re not satisfied, we can help with returns.',
+    'form.fullNameLabel': 'Full Name / Name (must be the buyer)',
+    'form.emailLabel': 'Email Address',
+    'form.phoneLabel': 'Mobile Phone',
+    'form.addressLabel': 'Delivery Address',
+    'form.noteLabel': 'Notes (optional)',
+    'form.noteBlock': 'Please make sure to fill in your own real name, email, phone number and address. Returns and refunds can only be processed after verifying your personal information to protect your rights. We offer <strong>use now, pay later</strong> and a <strong>7-day trial period</strong>. Your information is used only for this order and customer support, and will not be shared publicly.',
+    'form.submit': 'Submit Order',
+    'form.back': 'Back to Cart',
+    'ph.fullName': 'Please enter your full name',
+    'ph.email': 'example@email.com',
+    'ph.phone': 'e.g. +1 555 123 4567',
+    'ph.address': 'Street, city, state, ZIP',
+    'ph.note': 'e.g. preferred delivery time or building access info',
+    'footer.textPrefix': '© <span id="year"></span> North America Lifestyle Mall',
+    'modal.confirm.title': 'Please confirm your information',
+    'modal.confirm.body': 'Please confirm that all information you filled in (name, email, phone and address) belongs to you. Returns and refunds can only be processed after verifying the buyer\'s personal information to protect your rights.',
+    'modal.confirm.confirmBtn': 'Yes, this is my information',
+    'modal.confirm.editBtn': 'Edit information',
+    'modal.success.title': 'Order submitted successfully',
+    'modal.success.body': 'Your order has been successfully submitted. We will email your detailed order information within 1–3 business days for confirmation.',
+    'modal.success.okBtn': 'OK',
+    'alert.cartEmpty': 'Your cart is empty, please add items first.',
+    'alert.missingFields': 'Please fill in your name, email, phone and delivery address.',
+    'alert.networkError': 'Submission failed. Please try again later or contact us for assistance.'
+  },
+  zh: {
+    'brand.name': '北美生活优选商城',
+    'ribbon.main': '🎁 新用户享有 $50 欢迎优惠券，在购物车结账时自动折抵，每位用户限领一次。',
+    'ribbon.sub': '开启你的精选购物之旅，所有商品由合作工厂直供，价格透明欢迎比价。',
+    'ribbon.online': '👥 当前在线购物人数：<span id="onlineCount">--</span>',
+    'ribbon.claimed': '🔔 今日已领取优惠券：<span id="claimCount">--</span>',
+    'hero.title': '你的生活方式，你的专属回馈',
+    'hero.sub': '每周都会有新的优惠产品释出，所有商品皆由合作工厂与品牌直供，少了中间通路成本，价格更实在。欢迎你多方比价，我们用真实折扣说话。',
+    'products.heading': '精选好物推荐',
+    'cat.gaming': '电竞专区',
+    'cat.appliance': '家电精选',
+    'btn.addToCart': '加入购物车',
+    'cart.title': '购物车',
+    'cart.empty': '购物车目前为空，请先加入商品。',
+    'cart.total': '合计',
+    'cart.checkout': '去结账',
+    'cart.clear': '清空',
+    'cart.hint': '结账时，新用户的 $50 欢迎优惠券会自动折抵，仅限领取一次。',
+    'checkout.title': '订单与配送资讯',
+    'checkout.selection': '您的选择',
+    'checkout.subtotal': '小计',
+    'checkout.voucher': '优惠券（最高减 $50）',
+    'checkout.final': '应付金额',
+    'checkout.note': '系统会自动套用优惠券，您享有<strong>先使用后付款</strong>与<strong>7 天试用期</strong>，如不满意我们可协助退货。',
+    'form.fullNameLabel': 'Full Name / 姓名（须为购买人本人）',
+    'form.emailLabel': 'Email Address / 电子邮箱',
+    'form.phoneLabel': 'Mobile Phone / 手机号码',
+    'form.addressLabel': 'Delivery Address / 收货地址',
+    'form.noteLabel': 'Notes（选填）/ 备注',
+    'form.noteBlock': '请务必填写<b>本人真实姓名、电子邮箱、手机号码与收货地址</b>，退货与退款仅能以购买者本人资料办理，以保障您的权益。我们提供<strong>先使用后付款</strong>与<strong>7 天试用期</strong>，您的资讯仅用于本次订单与客服联络，不会对外公开。',
+    'form.submit': '提交订单',
+    'form.back': '返回购物车',
+    'ph.fullName': '请填写您的姓名',
+    'ph.email': '请输入常用电子邮箱',
+    'ph.phone': '请填写本人手机号码',
+    'ph.address': '详细收货地址（街道／城市／州／邮编）',
+    'ph.note': '例如：希望送达时间、门禁或大楼出入说明',
+    'footer.textPrefix': '© <span id="year"></span> 北美生活优选商城',
+    'modal.confirm.title': '确认是否为本人资讯',
+    'modal.confirm.body': '请再次确认您填写的姓名、邮箱、手机与收货地址均为本人真实资讯。如需办理退货或退款，仅能以购买者本人资料进行核对，以保障您的权益。',
+    'modal.confirm.confirmBtn': '确认以上资讯为本人',
+    'modal.confirm.editBtn': '返回修改资料',
+    'modal.success.title': '订单已成功送出',
+    'modal.success.body': '您的订单已成功提交，我们会在 1–3 个工作天内，将订单明细发送至您的电子邮箱以供确认。',
+    'modal.success.okBtn': '我知道了',
+    'alert.cartEmpty': '购物车目前为空，请先加入商品。',
+    'alert.missingFields': '请完整填写姓名、电子邮箱、手机号码与收货地址。',
+    'alert.networkError': '提交失败，请稍后再试或联系客户服务协助。'
   }
+};
 
-  // 小工具：安全呼叫 fbq
-  function fbTrack(eventName, params){
-    if(typeof fbq === 'function'){
-      fbq('track', eventName, params || {});
-    }
+let currentLang = 'en';
+// ⚠️ 類別預設先給 home，等 DOMContentLoaded 再從 localStorage 覆蓋
+let currentCategory = 'gaming';
+let isSubmittingOrder = false;
+let currentPurchaseEventId = null;
+
+// 產生去重用的 event_id
+function generateEventId(){
+  return 'ev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2,10);
+}
+
+// 小工具：安全呼叫 fbq
+function fbTrack(eventName, params){
+  if(typeof fbq === 'function'){
+    fbq('track', eventName, params || {});
   }
-  function fbTrackCustom(eventName, params){
-    if(typeof fbq === 'function'){
-      fbq('trackCustom', eventName, params || {});
-    }
+}
+function fbTrackCustom(eventName, params){
+  if(typeof fbq === 'function'){
+    fbq('trackCustom', eventName, params || {});
   }
+}
 
-  function t(key){
-    return (I18N[currentLang] && I18N[currentLang][key]) ||
-           (I18N.en && I18N.en[key]) || key;
-  }
+function t(key){
+  return (I18N[currentLang] && I18N[currentLang][key]) ||
+         (I18N.en && I18N.en[key]) || key;
+}
 
-  function setFooterYear(){
-    const y = document.getElementById('year');
-    if(y){ y.textContent = new Date().getFullYear(); }
-  }
+function setFooterYear(){
+  const y = document.getElementById('year');
+  if(y){ y.textContent = new Date().getFullYear(); }
+}
 
-  function applyLanguage(lang){
-    currentLang = lang;
+function applyLanguage(lang){
+  currentLang = lang;
 
-    try{
-      localStorage.setItem('nm_lang', lang);
-    }catch(e){}
+  try{
+    localStorage.setItem('nm_lang', lang);
+  }catch(e){}
 
-    document.querySelectorAll('.lang-btn').forEach(btn=>{
-      btn.classList.toggle('active', btn.dataset.lang === lang);
-    });
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.classList.toggle('active', btn.dataset.lang === lang);
+  });
 
-    document.querySelectorAll('[data-i18n]').forEach(el=>{
-      const key = el.dataset.i18n;
-      const html = t(key);
-      el.innerHTML = html;
-    });
+  document.querySelectorAll('[data-i18n]').forEach(el=>{
+    const key = el.dataset.i18n;
+    const html = t(key);
+    el.innerHTML = html;
+  });
 
-    document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
-      const key = el.dataset.i18nPlaceholder;
-      const text = t(key);
-      el.placeholder = text;
-    });
+  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+    const key = el.dataset.i18nPlaceholder;
+    const text = t(key);
+    el.placeholder = text;
+  });
 
-    setFooterYear();
-    renderCategoryTabs();
-    renderProductsGrid();
-    renderCart();
-  }
+  setFooterYear();
+  // 語言切換後，需要重繪類別 tabs / 商品 / 購物車，商品名稱才會換語系
+  renderCategoryTabs();
+  renderProductsGrid();
+  renderCart();
+}
 
-  const CATEGORIES = [
-    { id:'home',      number:1, labelKey:'cat.home' },
-    { id:'gaming',    number:2, labelKey:'cat.gaming' },
-    { id:'appliance', number:3, labelKey:'cat.appliance' },
-    { id:'outdoor',   number:4, labelKey:'cat.outdoor' }
-  ];
+// 類別 & 商品
+const CATEGORIES = [
+  { id:'gaming',    number:1, labelKey:'cat.gaming' },
+  { id:'appliance', number:2, labelKey:'cat.appliance' },
+];
 
-  const PRODUCTS = {
-    home: [
-      { id:'home1', price:59, image:'./assets/home-1.png', alt:'Cozy living room decor', nameEn:'Cozy Living Room Set',   nameZh:'北欧客厅布置套组' },
-      { id:'home2', price:29, image:'./assets/home-2.png', alt:'Table decor set',        nameEn:'Warm Tabletop Decor',    nameZh:'暖光桌面摆饰组' },
-      { id:'home3', price:39, image:'./assets/home-3.png', alt:'Bedroom decor',          nameEn:'Soft Bedroom Accent',    nameZh:'柔光卧室摆件' },
-      { id:'home4', price:45, image:'./assets/home-4.png', alt:'Minimal vase set',       nameEn:'Minimal Ceramic Vases',  nameZh:'极简陶瓷花瓶组' },
-      { id:'home5', price:35, image:'./assets/home-5.png', alt:'Scented candle set',     nameEn:'Scented Candle Bundle',  nameZh:'香氛蜡烛组合' },
-      { id:'home6', price:52, image:'./assets/home-6.png', alt:'Home gift set',          nameEn:'Home Gift Collection',   nameZh:'居家礼盒精选' }
-    ],
+const PRODUCTS = {
     gaming: [
-      { id:'gaming1', price:89, image:'./assets/gaming-1.png', alt:'Gaming headset',   nameEn:'Pro Gaming Headset',      nameZh:'专业电竞耳机' },
-      { id:'gaming2', price:79, image:'./assets/gaming-2.png', alt:'Mechanical kb',    nameEn:'Mechanical Gaming Keyboard', nameZh:'机械式电竞键盘' },
-      { id:'gaming3', price:65, image:'./assets/gaming-3.png', alt:'Gaming mouse',     nameEn:'Precision Gaming Mouse',  nameZh:'高精度电竞鼠标' },
-      { id:'gaming4', price:99, image:'./assets/gaming-4.png', alt:'Controller set',   nameEn:'Wireless Controller Duo', nameZh:'无线手柄双入组' },
-      { id:'gaming5', price:59, image:'./assets/gaming-5.png', alt:'RGB desk set',     nameEn:'RGB Desk Setup Kit',      nameZh:'RGB 电竞桌面套组' },
-      { id:'gaming6', price:49, image:'./assets/gaming-6.png', alt:'Streaming mic',    nameEn:'Streaming Microphone',    nameZh:'直播收音麦克风' }
-    ],
-    appliance: [
-      { id:'app1', price:69, image:'./assets/appliance-1.png', alt:'Blender',       nameEn:'Multi-Function Blender',    nameZh:'多功能料理机' },
-      { id:'app2', price:89, image:'./assets/appliance-2.png', alt:'Air fryer',     nameEn:'Smart Air Fryer',           nameZh:'智能气炸锅' },
-      { id:'app3', price:72, image:'./assets/appliance-3.png', alt:'Coffee maker',  nameEn:'Compact Coffee Maker',      nameZh:'迷你咖啡机' },
-      { id:'app4', price:95, image:'./assets/appliance-4.png', alt:'Vacuum',        nameEn:'Cordless Vacuum Cleaner',   nameZh:'无线吸尘器' },
-      { id:'app5', price:58, image:'./assets/appliance-5.png', alt:'Rice cooker',   nameEn:'Digital Rice Cooker',       nameZh:'数位电子电锅' },
-      { id:'app6', price:76, image:'./assets/appliance-6.png', alt:'Humidifier',    nameEn:'Quiet Air Humidifier',      nameZh:'静音加湿器' }
-    ],
-    outdoor: [
-      { id:'out1', price:79, image:'./assets/outdoor-1.png', alt:'Camping set',    nameEn:'Weekend Camping Set',       nameZh:'周末露营套装' },
-      { id:'out2', price:45, image:'./assets/outdoor-2.png', alt:'Picnic set',     nameEn:'Family Picnic Kit',         nameZh:'家庭野餐组合' },
-      { id:'out3', price:68, image:'./assets/outdoor-3.png', alt:'Hiking gear',    nameEn:'Lightweight Hiking Pack',   nameZh:'轻量登山背包组' },
-      { id:'out4', price:54, image:'./assets/outdoor-4.png', alt:'Outdoor lamp',   nameEn:'Rechargeable Camp Lamp',    nameZh:'充电户外营灯' },
-      { id:'out5', price:62, image:'./assets/outdoor-5.png', alt:'Beach set',      nameEn:'Beach Relax Set',           nameZh:'海边休闲套组' },
-      { id:'out6', price:39, image:'./assets/outdoor-6.png', alt:'Travel bottle',  nameEn:'Insulated Travel Bottle',   nameZh:'保温随行瓶' }
-    ]
+    { id:'gaming1', price:125, image:'./assets/gaming-1.png', alt:'Gaming headset',   nameEn:'ROG Delta II Wireless Gaming Headset',        nameZh:'ROG Delta II 无线游戏耳机' },
+    { id:'gaming2', price:69, image:'./assets/gaming-2.png', alt:'Mechanical kb',    nameEn:'ROG STRIX SCOPE II Gaming Keyboard', nameZh:'ROG STRIX SCOPE II 游戏键盘' },
+    { id:'gaming3', price:83, image:'./assets/gaming-3.png', alt:'Gaming mouse',     nameEn:'ROG KERIS II ORIGIN Wireless Gaming Mouse',    nameZh:'ROG KERIS II ORIGIN 无线游戏鼠标' },
+    { id:'gaming4', price:100, image:'./assets/gaming-4.png', alt:'Controller set',   nameEn:'ROG RAIKIRI Wireless Joystick',   nameZh:'ROG RAIKIRI 无线摇杆' },
+    { id:'gaming5', price:149, image:'./assets/gaming-5.png', alt:'RGB desk set',     nameEn:'RGB carbon fiber electric height-adjustable desk',        nameZh:'RGB碳纤维电动升降桌' },
+    { id:'gaming6', price:131, image:'./assets/gaming-6.png', alt:'Streaming mic',    nameEn:'ROG Carnyx Gaming Microphone RGB',      nameZh:'ROG Carnyx RGB 游戏麦克风' }
+  ],
+  appliance: [
+    { id:'app1', price:224, image:'./assets/appliance-1.png', alt:'Blender',       nameEn:'JOYOUNG No-Cleaning Multi-Functional Blender',    nameZh:'JOYOUNG-免清洗多功能调理机' },
+    { id:'app2', price:49, image:'./assets/appliance-2.png', alt:'Air fryer',     nameEn:'Cuisinart-Multi-functional air fryer',           nameZh:'Cuisinart-多功能空气炸锅' },
+    { id:'app3', price:150, image:'./assets/appliance-3.png', alt:'Coffee maker',  nameEn:'OSTER Coffee Machine',      nameZh:'OSTER-咖啡机' },
+    { id:'app4', price:380, image:'./assets/appliance-4.png', alt:'Vacuum',        nameEn:'Dyson V12s Detect Slim Submarine',   nameZh:'Dyson V12s无线吸尘器' }
+  ],
   };
 
-  function getProductsForCategory(id){
-    return PRODUCTS[id] || [];
+function getProductsForCategory(id){
+  return PRODUCTS[id] || [];
+}
+
+function findProductById(id){
+  for(const catId in PRODUCTS){
+    const p = PRODUCTS[catId].find(x=>x.id===id);
+    if(p) return p;
+  }
+  return null;
+}
+
+// Ribbon 假統計
+function updateOnline(){
+  const n = Math.floor(209 + Math.random()*180);
+  const el = document.getElementById('onlineCount');
+  if(el) el.textContent = n;
+}
+function updateClaim(){
+  const n = Math.floor(620 + Math.random()*200);
+  const el = document.getElementById('claimCount');
+  if(el) el.textContent = n;
+}
+
+// 購物車
+const cart = {};
+
+function hasUsedVoucherInBrowser(){
+  try{return localStorage.getItem('nm_voucher_used') === '1';}
+  catch(e){return false;}
+}
+function markVoucherUsedInBrowser(){
+  try{localStorage.setItem('nm_voucher_used','1');}
+  catch(e){}
+}
+
+function renderCart(){
+  const container = document.getElementById('cartItems');
+  const totalEl = document.getElementById('cartTotal');
+  if(!container || !totalEl) return;
+  container.innerHTML = '';
+
+  const ids = Object.keys(cart);
+  if(!ids.length){
+    const empty = document.createElement('div');
+    empty.className = 'cart-empty';
+    empty.textContent = t('cart.empty');
+    container.appendChild(empty);
+    totalEl.textContent = '0';
+    return;
   }
 
-  function findProductById(id){
-    for(const catId in PRODUCTS){
-      const p = PRODUCTS[catId].find(x=>x.id===id);
-      if(p) return p;
-    }
-    return null;
-  }
+  let total = 0;
+  ids.forEach(id=>{
+    const item = cart[id];
+    const linePrice = item.price * item.qty;
+    total += linePrice;
+    const displayName = currentLang === 'zh' ? item.nameZh : item.nameEn;
 
-  function updateOnline(){
-    const n = Math.floor(209 + Math.random()*180);
-    const el = document.getElementById('onlineCount');
-    if(el) el.textContent = n;
-  }
-  function updateClaim(){
-    const n = Math.floor(620 + Math.random()*200);
-    const el = document.getElementById('claimCount');
-    if(el) el.textContent = n;
-  }
+    const row = document.createElement('div');
+    row.className = 'cart-row';
+    row.innerHTML = `
+      <div class="cart-row-name">${displayName}</div>
+      <div class="cart-row-qty">
+        <button type="button" data-id="${id}" data-delta="-1" class="qty-btn">−</button>
+        <span>${item.qty}</span>
+        <button type="button" data-id="${id}" data-delta="1" class="qty-btn">+</button>
+      </div>
+      <div class="cart-row-price">$${linePrice}</div>
+    `;
+    container.appendChild(row);
+  });
 
-  const cart = {};
+  totalEl.textContent = total.toString();
 
-  function hasUsedVoucherInBrowser(){
-    try{return localStorage.getItem('nm_voucher_used') === '1';}
-    catch(e){return false;}
-  }
-  function markVoucherUsedInBrowser(){
-    try{localStorage.setItem('nm_voucher_used','1');}
-    catch(e){}
-  }
-
-  function renderCart(){
-    const container = document.getElementById('cartItems');
-    const totalEl = document.getElementById('cartTotal');
-    if(!container || !totalEl) return;
-    container.innerHTML = '';
-
-    const ids = Object.keys(cart);
-    if(!ids.length){
-      const empty = document.createElement('div');
-      empty.className = 'cart-empty';
-      empty.textContent = t('cart.empty');
-      container.appendChild(empty);
-      totalEl.textContent = '0';
-      return;
-    }
-
-    let total = 0;
-    ids.forEach(id=>{
-      const item = cart[id];
-      const linePrice = item.price * item.qty;
-      total += linePrice;
-      const displayName = currentLang === 'zh' ? item.nameZh : item.nameEn;
-
-      const row = document.createElement('div');
-      row.className = 'cart-row';
-      row.innerHTML = `
-        <div class="cart-row-name">${displayName}</div>
-        <div class="cart-row-qty">
-          <button type="button" data-id="${id}" data-delta="-1" class="qty-btn">−</button>
-          <span>${item.qty}</span>
-          <button type="button" data-id="${id}" data-delta="1" class="qty-btn">+</button>
-        </div>
-        <div class="cart-row-price">$${linePrice}</div>
-      `;
-      container.appendChild(row);
-    });
-
-    totalEl.textContent = total.toString();
-
-    container.querySelectorAll('.qty-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const id = btn.dataset.id;
-        const delta = parseInt(btn.dataset.delta,10);
-        if(cart[id]){
-          cart[id].qty += delta;
-          if(cart[id].qty <= 0){ delete cart[id]; }
-          renderCart();
-        }
-      });
-    });
-  }
-
-  function getCartItemsArray(){
-    return Object.keys(cart).map(id=>({
-      id,
-      nameEn: cart[id].nameEn,
-      nameZh: cart[id].nameZh,
-      price: cart[id].price,
-      qty: cart[id].qty
-    }));
-  }
-
-  function getCartTotals(){
-    const items = getCartItemsArray();
-    let subtotal = 0;
-    items.forEach(it=> subtotal += it.price * it.qty);
-
-    const voucherBeforeLimit = Math.min(50, subtotal);
-    const voucher = hasUsedVoucherInBrowser() ? 0 : voucherBeforeLimit;
-    const finalTotal = subtotal - voucher;
-
-    return { items, subtotal, voucher, finalTotal };
-  }
-
-  function openCheckout(){
-    const { items, subtotal, voucher, finalTotal } = getCartTotals();
-    if(!items.length){
-      alert(t('alert.cartEmpty'));
-      return;
-    }
-
-    const listEl = document.getElementById('checkoutItemsList');
-    const subEl = document.getElementById('checkoutSubtotal');
-    const voucherEl = document.getElementById('checkoutVoucher');
-    const finalEl = document.getElementById('checkoutFinal');
-    if(!listEl || !subEl || !voucherEl || !finalEl) return;
-
-    listEl.innerHTML = '';
-
-    items.forEach(it=>{
-      const displayName = currentLang === 'zh' ? it.nameZh : it.nameEn;
-      const li = document.createElement('li');
-      li.textContent = `${displayName} x${it.qty} ($${it.price})`;
-      listEl.appendChild(li);
-    });
-
-    subEl.textContent = subtotal.toString();
-    voucherEl.textContent = voucher.toString();
-    finalEl.textContent = finalTotal.toString();
-
-    const section = document.getElementById('checkoutSection');
-    if(section){
-      section.classList.remove('hidden');
-      section.scrollIntoView({behavior:'smooth'});
-    }
-
-    fbTrack('InitiateCheckout',{value:finalTotal,currency:'USD'});
-    fbTrackCustom('CheckoutOpen',{subtotal,voucher,finalTotal});
-  }
-
-  function renderCategoryTabs(){
-    const container = document.getElementById('categoryTabs');
-    if(!container) return;
-    container.innerHTML = '';
-
-    CATEGORIES.forEach(cat=>{
-      const tab = document.createElement('button');
-      tab.type = 'button';
-      tab.className = 'category-tab' + (cat.id === currentCategory ? ' active':'');
-      tab.dataset.id = cat.id;
-      tab.innerHTML = `
-        <span class="category-tab-number">${cat.number}</span>
-        <span>${t(cat.labelKey)}</span>
-      `;
-      tab.addEventListener('click', ()=>{
-        currentCategory = cat.id;
-        renderCategoryTabs();
-        renderProductsGrid();
-        fbTrackCustom('CategoryClick',{category:cat.id});
-      });
-      container.appendChild(tab);
-    });
-  }
-
-  function renderProductsGrid(){
-    const grid = document.getElementById('productsGrid');
-    if(!grid) return;
-    grid.innerHTML = '';
-
-    const products = getProductsForCategory(currentCategory);
-    products.forEach(p=>{
-      const displayName = currentLang === 'zh' ? p.nameZh : p.nameEn;
-      const card = document.createElement('div');
-      card.className = 'product';
-      card.innerHTML = `
-        <img src="${p.image}" alt="${p.alt}">
-        <div class="panel">
-          <div class="title">${displayName}</div>
-          <div class="price">$${p.price}</div>
-          <button class="btn add-to-cart" type="button" data-id="${p.id}">
-            ${t('btn.addToCart')}
-          </button>
-        </div>
-      `;
-      grid.appendChild(card);
-    });
-
-    grid.querySelectorAll('.add-to-cart').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const id = btn.dataset.id;
-        const p = findProductById(id);
-        if(!p) return;
-        if(!cart[id]){
-          cart[id] = {
-            nameEn:p.nameEn,
-            nameZh:p.nameZh,
-            price:p.price,
-            qty:0
-          };
-        }
-        cart[id].qty += 1;
+  container.querySelectorAll('.qty-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.dataset.id;
+      const delta = parseInt(btn.dataset.delta,10);
+      if(cart[id]){
+        cart[id].qty += delta;
+        if(cart[id].qty <= 0){ delete cart[id]; }
         renderCart();
-
-        fbTrack('AddToCart',{content_name:p.nameEn,value:p.price,currency:'USD'});
-        fbTrackCustom('AddToCartClick',{name:p.nameEn,price:p.price});
-      });
+      }
     });
+  });
+}
+
+function getCartItemsArray(){
+  return Object.keys(cart).map(id=>({
+    id,
+    nameEn: cart[id].nameEn,
+    nameZh: cart[id].nameZh,
+    price: cart[id].price,
+    qty: cart[id].qty
+  }));
+}
+
+function getCartTotals(){
+  const items = getCartItemsArray();
+  let subtotal = 0;
+  items.forEach(it=> subtotal += it.price * it.qty);
+
+  const voucherBeforeLimit = Math.min(50, subtotal);
+  const voucher = hasUsedVoucherInBrowser() ? 0 : voucherBeforeLimit;
+  const finalTotal = subtotal - voucher;
+
+  return { items, subtotal, voucher, finalTotal };
+}
+
+function openCheckout(){
+  const { items, subtotal, voucher, finalTotal } = getCartTotals();
+  if(!items.length){
+    alert(t('alert.cartEmpty'));
+    return;
   }
 
-  function showModal(id){
-    const el=document.getElementById(id);
-    if(el) el.classList.remove('hidden');
+  const listEl = document.getElementById('checkoutItemsList');
+  const subEl = document.getElementById('checkoutSubtotal');
+  const voucherEl = document.getElementById('checkoutVoucher');
+  const finalEl = document.getElementById('checkoutFinal');
+  if(!listEl || !subEl || !voucherEl || !finalEl) return;
+
+  listEl.innerHTML = '';
+
+  items.forEach(it=>{
+    const displayName = currentLang === 'zh' ? it.nameZh : it.nameEn;
+    const li = document.createElement('li');
+    li.textContent = `${displayName} x${it.qty} ($${it.price})`;
+    listEl.appendChild(li);
+  });
+
+  subEl.textContent = subtotal.toString();
+  voucherEl.textContent = voucher.toString();
+  finalEl.textContent = finalTotal.toString();
+
+  const section = document.getElementById('checkoutSection');
+  if(section){
+    section.classList.remove('hidden');
+    section.scrollIntoView({behavior:'smooth'});
   }
-  function hideModal(id){
-    const el=document.getElementById(id);
-    if(el) el.classList.add('hidden');
+
+  fbTrack('InitiateCheckout',{value:finalTotal,currency:'USD'});
+  fbTrackCustom('CheckoutOpen',{subtotal,voucher,finalTotal});
+}
+
+// Category UI
+function renderCategoryTabs(){
+  const container = document.getElementById('categoryTabs');
+  if(!container) return;
+  container.innerHTML = '';
+
+  CATEGORIES.forEach(cat=>{
+    const tab = document.createElement('button');
+    tab.type = 'button';
+    tab.className = 'category-tab' + (cat.id === currentCategory ? ' active':'');
+    tab.dataset.id = cat.id;
+    tab.innerHTML = `
+      <span class="category-tab-number">${cat.number}</span>
+      <span>${t(cat.labelKey)}</span>
+    `;
+    tab.addEventListener('click', ()=>{
+      currentCategory = cat.id;
+
+      // ✅ 這裡記住使用者選的是哪個專區
+      try{
+        localStorage.setItem('nm_cat', currentCategory);
+      }catch(e){}
+
+      renderCategoryTabs();
+      renderProductsGrid();
+      fbTrackCustom('CategoryClick',{category:cat.id});
+    });
+    container.appendChild(tab);
+  });
+}
+
+function renderProductsGrid(){
+  const grid = document.getElementById('productsGrid');
+  if(!grid) return;
+  grid.innerHTML = '';
+
+  const products = getProductsForCategory(currentCategory);
+  products.forEach(p=>{
+    const displayName = currentLang === 'zh' ? p.nameZh : p.nameEn;
+    const card = document.createElement('div');
+    card.className = 'product';
+    card.innerHTML = `
+      <img src="${p.image}" alt="${p.alt}">
+      <div class="panel">
+        <div class="title">${displayName}</div>
+        <div class="price">$${p.price}</div>
+        <button class="btn add-to-cart" type="button" data-id="${p.id}">
+          ${t('btn.addToCart')}
+        </button>
+      </div>
+    `;
+    grid.appendChild(card);
+  });
+
+  // 加入購物車
+  grid.querySelectorAll('.add-to-cart').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const id = btn.dataset.id;
+      const p = findProductById(id);
+      if(!p) return;
+      if(!cart[id]){
+        cart[id] = {
+          nameEn:p.nameEn,
+          nameZh:p.nameZh,
+          price:p.price,
+          qty:0
+        };
+      }
+      cart[id].qty += 1;
+      renderCart();
+
+      fbTrack('AddToCart',{content_name:p.nameEn,value:p.price,currency:'USD'});
+      fbTrackCustom('AddToCartClick',{name:p.nameEn,price:p.price});
+    });
+  });
+
+  // 點商品圖片 → 放大顯示（不會影響購物車）
+  grid.querySelectorAll('.product img').forEach(img=>{
+    img.style.cursor = 'zoom-in';
+    img.addEventListener('click', ()=>{
+      openImageLightbox(img.src, img.alt);
+      fbTrackCustom('ImageZoom',{src: img.src});
+    });
+  });
+}
+
+// Modal helpers
+function showModal(id){
+  const el=document.getElementById(id);
+  if(el) el.classList.remove('hidden');
+}
+function hideModal(id){
+  const el=document.getElementById(id);
+  if(el) el.classList.add('hidden');
+}
+
+// 圖片燈箱
+function openImageLightbox(src, alt){
+  const overlay = document.getElementById('imageLightbox');
+  const img = document.getElementById('imageLightboxImg');
+  if(!overlay || !img) return;
+  img.src = src;
+  img.alt = alt || '';
+  overlay.classList.remove('hidden');
+}
+
+function closeImageLightbox(){
+  const overlay = document.getElementById('imageLightbox');
+  if(overlay){
+    overlay.classList.add('hidden');
+  }
+}
+
+let pendingOrderData = null;
+
+// 送單
+async function actuallySubmitOrder(orderData){
+  const finalTotal = (orderData && orderData.totals && orderData.totals.finalTotal)
+    ? Number(orderData.totals.finalTotal) || 0
+    : 0;
+
+  const eventId = orderData && orderData.eventId ? orderData.eventId : generateEventId();
+  currentPurchaseEventId = eventId;
+
+  if(isSubmittingOrder) return;
+  isSubmittingOrder = true;
+
+  const submitBtn = document.querySelector('#checkoutForm button[type="submit"]');
+  const originalText = submitBtn ? submitBtn.textContent : '';
+  if(submitBtn){
+    submitBtn.disabled = true;
+    submitBtn.textContent = currentLang === 'zh' ? '提交中...' : 'Submitting...';
   }
 
-  let pendingOrderData = null;
+  if(!ORDER_API_ENDPOINT){
+    console.log('=== Demo order (no backend configured) ===');
+    console.log(orderData);
 
-  async function actuallySubmitOrder(orderData){
-    const finalTotal = (orderData && orderData.totals && orderData.totals.finalTotal)
-      ? Number(orderData.totals.finalTotal) || 0
-      : 0;
+    if(typeof fbq === 'function'){
+      fbq('track','Purchase',
+          {value:finalTotal,currency:'USD'},
+          {eventID:eventId});
+      fbq('track','Lead',
+          {value:finalTotal,currency:'USD'},
+          {eventID:eventId});
+      fbq('trackCustom','OrderSubmitDemo',{finalTotal,eventId});
+    }
 
-    const eventId = orderData && orderData.eventId ? orderData.eventId : generateEventId();
-    currentPurchaseEventId = eventId;
+    showModal('successModal');
 
-    if(isSubmittingOrder) return;
-    isSubmittingOrder = true;
-
-    const submitBtn = document.querySelector('#checkoutForm button[type="submit"]');
-    const originalText = submitBtn ? submitBtn.textContent : '';
     if(submitBtn){
-      submitBtn.disabled = true;
-      submitBtn.textContent = currentLang === 'zh' ? '提交中...' : 'Submitting...';
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
+    }
+    isSubmittingOrder = false;
+    return;
+  }
+
+  try{
+    const payload = Object.assign({}, orderData, { eventId });
+
+    await fetch(ORDER_API_ENDPOINT,{
+      method:'POST',
+      mode:'no-cors',
+      body: JSON.stringify(payload)
+    });
+
+    markVoucherUsedInBrowser();
+
+    if(typeof fbq === 'function'){
+      fbq('track','Purchase',
+          {value:finalTotal,currency:'USD'},
+          {eventID:eventId});
+      fbq('track','Lead',
+          {value:finalTotal,currency:'USD'},
+          {eventID:eventId});
+      fbq('trackCustom','OrderSubmit',{finalTotal,eventId});
     }
 
-    if(!ORDER_API_ENDPOINT){
-      console.log('=== Demo order (no backend configured) ===');
-      console.log(orderData);
+    for(const k in cart){ delete cart[k]; }
+    renderCart();
+    const form = document.getElementById('checkoutForm');
+    if(form) form.reset();
 
-      if(typeof fbq === 'function'){
-        fbq('track','Purchase',
-            {value:finalTotal,currency:'USD'},
-            {eventID:eventId});
-        fbq('track','Lead',
-            {value:finalTotal,currency:'USD'},
-            {eventID:eventId});
-        fbq('trackCustom','OrderSubmitDemo',{finalTotal,eventId});
-      }
-
-      showModal('successModal');
-
-      if(submitBtn){
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }
-      isSubmittingOrder = false;
-      return;
+    showModal('successModal');
+  }catch(err){
+    console.error('Order submit error:',err);
+    alert(t('alert.networkError'));
+  }finally{
+    if(submitBtn){
+      submitBtn.disabled = false;
+      submitBtn.textContent = originalText;
     }
+    isSubmittingOrder = false;
+  }
+}
 
-    try{
-      const payload = Object.assign({}, orderData, { eventId });
+// DOM ready
+document.addEventListener('DOMContentLoaded', ()=>{
+  // 語言切換按鈕
+  document.querySelectorAll('.lang-btn').forEach(btn=>{
+    btn.addEventListener('click', ()=>{
+      const lang = btn.dataset.lang;
+      applyLanguage(lang);
+      fbTrackCustom('LangSwitch',{lang});
+    });
+  });
 
-      await fetch(ORDER_API_ENDPOINT,{
-        method:'POST',
-        mode:'no-cors',
-        body: JSON.stringify(payload)
-      });
+  // 初始語言
+  let savedLang = 'en';
+  try{
+    const v = localStorage.getItem('nm_lang');
+    if(v === 'en' || v === 'zh') savedLang = v;
+  }catch(e){}
 
-      markVoucherUsedInBrowser();
+  // ✅ 初始類別：從 localStorage 恢復 nm_cat，沒有就用 home
+  try{
+    const savedCat = localStorage.getItem('nm_cat');
+    if(savedCat && PRODUCTS[savedCat]){
+      currentCategory = savedCat;
+    }else{
+      currentCategory = 'gaming';
+    }
+  }catch(e){
+    currentCategory = 'gaming';
+  }
 
-      if(typeof fbq === 'function'){
-        fbq('track','Purchase',
-            {value:finalTotal,currency:'USD'},
-            {eventID:eventId});
-        fbq('track','Lead',
-            {value:finalTotal,currency:'USD'},
-            {eventID:eventId});
-        fbq('trackCustom','OrderSubmit',{finalTotal,eventId});
-      }
+  // 先畫一版，再套用語言
+  renderCategoryTabs();
+  renderProductsGrid();
+  renderCart();
+  applyLanguage(savedLang);
 
+  setFooterYear();
+  updateOnline(); updateClaim();
+  setInterval(updateOnline, 10000);
+  setInterval(updateClaim, 20000);
+
+  // 清空購物車
+  const clearBtn = document.getElementById('clearCartBtn');
+  if(clearBtn){
+    clearBtn.addEventListener('click', ()=>{
+      const { items, subtotal } = getCartTotals();
+      fbTrackCustom('CartClear',{itemCount:items.length,subtotal});
       for(const k in cart){ delete cart[k]; }
       renderCart();
-      const form = document.getElementById('checkoutForm');
-      if(form) form.reset();
-
-      showModal('successModal');
-    }catch(err){
-      console.error('Order submit error:',err);
-      alert(t('alert.networkError'));
-    }finally{
-      if(submitBtn){
-        submitBtn.disabled = false;
-        submitBtn.textContent = originalText;
-      }
-      isSubmittingOrder = false;
-    }
+    });
   }
 
-  document.addEventListener('DOMContentLoaded', ()=>{
-    document.querySelectorAll('.lang-btn').forEach(btn=>{
-      btn.addEventListener('click', ()=>{
-        const lang = btn.dataset.lang;
-        applyLanguage(lang);
-        fbTrackCustom('LangSwitch',{lang});
-      });
+  // Checkout 按鈕
+  const checkoutBtn = document.getElementById('checkoutBtn');
+  if(checkoutBtn){
+    checkoutBtn.addEventListener('click', openCheckout);
+  }
+
+  // 返回購物車
+  const backBtn = document.getElementById('backToCartBtn');
+  if(backBtn){
+    backBtn.addEventListener('click', ()=>{
+      const el = document.getElementById('featured');
+      if(el){ el.scrollIntoView({behavior:'smooth'}); }
+      fbTrackCustom('BackToCart',{});
     });
+  }
 
-    let savedLang = 'en';
-    try{
-      const v = localStorage.getItem('nm_lang');
-      if(v === 'en' || v === 'zh') savedLang = v;
-    }catch(e){}
+  // Hero 圖片放大
+  const heroImg = document.querySelector('.hero .card img');
+  if(heroImg){
+    heroImg.style.cursor = 'zoom-in';
+    heroImg.addEventListener('click', ()=>{
+      openImageLightbox(heroImg.src, heroImg.alt || '');
+      fbTrackCustom('HeroImageZoom',{src: heroImg.src});
+    });
+  }
 
-    renderCategoryTabs();
-    renderProductsGrid();
-    renderCart();
-    applyLanguage(savedLang);
+  // 表單送出（先開確認本人 Modal）
+  const form = document.getElementById('checkoutForm');
+  if(form){
+    form.addEventListener('submit',(event)=>{
+      event.preventDefault();
 
-    setFooterYear();
-    updateOnline(); updateClaim();
-    setInterval(updateOnline, 10000);
-    setInterval(updateClaim, 20000);
+      const { items, subtotal, voucher, finalTotal } = getCartTotals();
+      if(!items.length){
+        alert(t('alert.cartEmpty'));
+        return;
+      }
 
-    const clearBtn = document.getElementById('clearCartBtn');
-    if(clearBtn){
-      clearBtn.addEventListener('click', ()=>{
-        const { items, subtotal } = getCartTotals();
-        fbTrackCustom('CartClear',{itemCount:items.length,subtotal});
-        for(const k in cart){ delete cart[k]; }
-        renderCart();
-      });
-    }
+      const orderData = {
+        fullName: form.fullName.value.trim(),
+        phone:   form.phone.value.trim(),
+        email:   form.email.value.trim(),
+        address: form.address.value.trim(),
+        note:    form.note.value.trim(),
+        items,
+        totals:{ subtotal, voucher, finalTotal },
+        createdAt: new Date().toISOString()
+      };
 
-    const checkoutBtn = document.getElementById('checkoutBtn');
-    if(checkoutBtn){
-      checkoutBtn.addEventListener('click', openCheckout);
-    }
+      const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      const phoneDigits = orderData.phone.replace(/\D/g,'');
 
-    const backBtn = document.getElementById('backToCartBtn');
-    if(backBtn){
-      backBtn.addEventListener('click', ()=>{
-        const el = document.getElementById('featured');
-        if(el){ el.scrollIntoView({behavior:'smooth'}); }
-        fbTrackCustom('BackToCart',{});
-      });
-    }
+      if(!emailReg.test(orderData.email)){
+        alert(currentLang === 'zh'
+          ? '请填写正确的电子邮箱格式。'
+          : 'Please enter a valid email address.'
+        );
+        return;
+      }
+      if(phoneDigits.length < 8){
+        alert(currentLang === 'zh'
+          ? '请填写正确的手机号码。'
+          : 'Please enter a valid mobile phone number.'
+        );
+        return;
+      }
 
-    const form = document.getElementById('checkoutForm');
-    if(form){
-      form.addEventListener('submit',(event)=>{
-        event.preventDefault();
+      if(!orderData.fullName || !orderData.phone || !orderData.address || !orderData.email){
+        alert(t('alert.missingFields'));
+        return;
+      }
 
-        const { items, subtotal, voucher, finalTotal } = getCartTotals();
-        if(!items.length){
-          alert(t('alert.cartEmpty'));
-          return;
-        }
+      const eventId = generateEventId();
+      orderData.eventId = eventId;
 
-        const orderData = {
-          fullName: form.fullName.value.trim(),
-          phone:   form.phone.value.trim(),
-          email:   form.email.value.trim(),
-          address: form.address.value.trim(),
-          note:    form.note.value.trim(),
-          items,
-          totals:{ subtotal, voucher, finalTotal },
-          createdAt: new Date().toISOString()
-        };
+      pendingOrderData = orderData;
+      showModal('confirmModal');
+    });
+  }
 
-        const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        const phoneDigits = orderData.phone.replace(/\D/g,'');
+  // 確認本人資訊 Modal
+  const editInfoBtn = document.getElementById('editInfoBtn');
+  if(editInfoBtn){
+    editInfoBtn.addEventListener('click', ()=>{
+      pendingOrderData = null;
+      hideModal('confirmModal');
+      fbTrackCustom('OrderEditInfo',{});
+    });
+  }
 
-        if(!emailReg.test(orderData.email)){
-          alert(currentLang === 'zh'
-            ? '请填写正确的电子邮箱格式。'
-            : 'Please enter a valid email address.'
-          );
-          return;
-        }
-        if(phoneDigits.length < 8){
-          alert(currentLang === 'zh'
-            ? '请填写正确的手机号码。'
-            : 'Please enter a valid mobile phone number.'
-          );
-          return;
-        }
-
-        if(!orderData.fullName || !orderData.phone || !orderData.address || !orderData.email){
-          alert(t('alert.missingFields'));
-          return;
-        }
-
-        const eventId = generateEventId();
-        orderData.eventId = eventId;
-
-        pendingOrderData = orderData;
-        showModal('confirmModal');
-      });
-    }
-
-    const editInfoBtn = document.getElementById('editInfoBtn');
-    if(editInfoBtn){
-      editInfoBtn.addEventListener('click', ()=>{
+  const confirmInfoBtn = document.getElementById('confirmInfoBtn');
+  if(confirmInfoBtn){
+    confirmInfoBtn.addEventListener('click', async ()=>{
+      hideModal('confirmModal');
+      if(pendingOrderData){
+        const finalTotal = pendingOrderData.totals.finalTotal || 0;
+        const eventId = pendingOrderData.eventId || null;
+        fbTrackCustom('OrderConfirmInfo',{finalTotal,eventId});
+        await actuallySubmitOrder(pendingOrderData);
         pendingOrderData = null;
-        hideModal('confirmModal');
-        fbTrackCustom('OrderEditInfo',{});
-      });
-    }
+      }
+    });
+  }
 
-    const confirmInfoBtn = document.getElementById('confirmInfoBtn');
-    if(confirmInfoBtn){
-      confirmInfoBtn.addEventListener('click', async ()=>{
-        hideModal('confirmModal');
-        if(pendingOrderData){
-          const finalTotal = pendingOrderData.totals.finalTotal || 0;
-          const eventId = pendingOrderData.eventId || null;
-          fbTrackCustom('OrderConfirmInfo',{finalTotal,eventId});
-          await actuallySubmitOrder(pendingOrderData);
-          pendingOrderData = null;
-        }
-      });
-    }
+  // 成功 Modal
+  const successOkBtn = document.getElementById('successOkBtn');
+  if(successOkBtn){
+    successOkBtn.addEventListener('click', ()=>{
+      hideModal('successModal');
+      fbTrackCustom('OrderSuccessModalClose',{});
+    });
+  }
 
-    const successOkBtn = document.getElementById('successOkBtn');
-    if(successOkBtn){
-      successOkBtn.addEventListener('click', ()=>{
-        hideModal('successModal');
-        fbTrackCustom('OrderSuccessModalClose',{});
-      });
-    }
+  // 圖片燈箱關閉
+  const imageLightbox = document.getElementById('imageLightbox');
+  const imageLightboxClose = document.getElementById('imageLightboxClose');
 
-    setTimeout(()=>{
-      fbTrackCustom('ViewContentTimed', { seconds: 30 });
-    }, 30000);
-  });
-  </script>
+  if(imageLightbox){
+    imageLightbox.addEventListener('click', (e)=>{
+      if(e.target === imageLightbox){
+        closeImageLightbox();
+      }
+    });
+  }
+  if(imageLightboxClose){
+    imageLightboxClose.addEventListener('click', ()=>{
+      closeImageLightbox();
+    });
+  }
+
+  // ViewContentTimed 停留 30 秒
+  setTimeout(()=>{
+    fbTrackCustom('ViewContentTimed', { seconds: 30 });
+  }, 30000);
+});
+</script>
+
 
   <!-- Facebook Pixel（新版 ID） -->
   <script>
@@ -714,6 +756,7 @@
          src="https://www.facebook.com/tr?id=1879609856327374&ev=PageView&noscript=1"/>
   </noscript>
 
+  <!-- CSS -->
   <style>
     :root{
       --navy:#0e2144;
@@ -751,12 +794,12 @@
     .logo-img{
       width:96px;
       height:96px;
+      border-radius:20px;
       object-fit:contain;
-      /* 拿掉黑色底框與邊角 */
-      border-radius:0;
       background:transparent;
       padding:0;
     }
+
     .name{font-weight:800;letter-spacing:.3px;}
 
     .header-right{
@@ -1120,6 +1163,40 @@
       border:1px solid var(--border);
     }
 
+    /* 圖片燈箱 */
+    .image-lightbox-card{
+      position:relative;
+      max-width:96vw;
+      max-height:90vh;
+      padding:0;
+      background:transparent;
+      border:none;
+      box-shadow:none;
+    }
+
+    .image-lightbox-card img{
+      max-width:96vw;
+      max-height:90vh;
+      border-radius:16px;
+    }
+
+    .image-lightbox-close{
+      position:absolute;
+      top:10px;
+      right:10px;
+      width:32px;
+      height:32px;
+      border-radius:50%;
+      border:none;
+      background:rgba(0,0,0,.65);
+      color:#fff;
+      font-size:22px;
+      cursor:pointer;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+    }
+
     @media (max-width: 980px){
       .hero{grid-template-columns:1fr;}
       .products-layout{grid-template-columns:1fr;}
@@ -1127,6 +1204,16 @@
       .btn{width:100%;}
       .checkout-form-grid{grid-template-columns:1fr;}
       .header-right{flex-direction:column-reverse;align-items:flex-end;}
+
+      .logo-img{
+        width:64px;
+        height:64px;
+      }
+
+      .image-lightbox-card img{
+        max-width:100vw;
+        max-height:80vh;
+      }
     }
 
     .hidden{display:none;}
@@ -1173,7 +1260,7 @@
         </p>
       </div>
       <div class="card">
-        <img alt="Lifestyle collage" src="./assets/home-1.png" />
+        <img alt="Lifestyle collage" src="./assets/home-7.png" />
       </div>
     </section>
 
@@ -1296,6 +1383,14 @@
       <div class="modal-actions">
         <button type="button" id="successOkBtn" class="modal-btn primary" data-i18n="modal.success.okBtn"></button>
       </div>
+    </div>
+  </div>
+
+  <!-- 圖片放大燈箱 -->
+  <div id="imageLightbox" class="modal-overlay hidden">
+    <div class="image-lightbox-card">
+      <button type="button" id="imageLightboxClose" class="image-lightbox-close">&times;</button>
+      <img id="imageLightboxImg" src="" alt="">
     </div>
   </div>
 </body>
