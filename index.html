@@ -10,7 +10,7 @@
   <script>
     // ✅ 新的 Pixel ID
     const FB_PIXEL_ID = "1879609856327374";
-    // ✅ Google Apps Script Web App URL（如果之後再重新部署，要一起更新）
+    // ✅ Google Apps Script Web App URL（如果你之後再重新部署，要一起更新）
     const ORDER_API_ENDPOINT = "https://script.google.com/macros/s/AKfycbzkEQpk9t5v8fZoqwYR3hM8CESuECYQuM6CBqrk6UdmwiN_IdochhO51hec3eRBszLFtA/exec";
   </script>
 
@@ -182,7 +182,10 @@
 
   function applyLanguage(lang){
     currentLang = lang;
-    try{ localStorage.setItem('nm_lang', lang); }catch(e){}
+
+    try{
+      localStorage.setItem('nm_lang', lang);
+    }catch(e){}
 
     document.querySelectorAll('.lang-btn').forEach(btn=>{
       btn.classList.toggle('active', btn.dataset.lang === lang);
@@ -190,12 +193,14 @@
 
     document.querySelectorAll('[data-i18n]').forEach(el=>{
       const key = el.dataset.i18n;
-      el.innerHTML = t(key);
+      const html = t(key);
+      el.innerHTML = html;
     });
 
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
       const key = el.dataset.i18nPlaceholder;
-      el.placeholder = t(key);
+      const text = t(key);
+      el.placeholder = text;
     });
 
     setFooterYear();
@@ -204,7 +209,6 @@
     renderCart();
   }
 
-  // === 類別與商品資料 ===
   const CATEGORIES = [
     { id:'home',      number:1, labelKey:'cat.home' },
     { id:'gaming',    number:2, labelKey:'cat.gaming' },
@@ -259,7 +263,6 @@
     return null;
   }
 
-  // Ribbon 假統計數字
   function updateOnline(){
     const n = Math.floor(209 + Math.random()*180);
     const el = document.getElementById('onlineCount');
@@ -271,8 +274,7 @@
     if(el) el.textContent = n;
   }
 
-  // 購物車資料
-  const cart = {}; // key: productId -> { nameEn, nameZh, price, qty }
+  const cart = {};
 
   function hasUsedVoucherInBrowser(){
     try{return localStorage.getItem('nm_voucher_used') === '1';}
@@ -473,7 +475,6 @@
 
   let pendingOrderData = null;
 
-  // 送單（會帶 eventId 給 Apps Script + Pixel eventID）
   async function actuallySubmitOrder(orderData){
     const finalTotal = (orderData && orderData.totals && orderData.totals.finalTotal)
       ? Number(orderData.totals.finalTotal) || 0
@@ -673,7 +674,7 @@
         if(pendingOrderData){
           const finalTotal = pendingOrderData.totals.finalTotal || 0;
           const eventId = pendingOrderData.eventId || null;
-          fbTrackCustom('OrderConfirmInfo',{finalTotal,event_id:eventId});
+          fbTrackCustom('OrderConfirmInfo',{finalTotal,eventId});
           await actuallySubmitOrder(pendingOrderData);
           pendingOrderData = null;
         }
@@ -694,7 +695,7 @@
   });
   </script>
 
-  <!-- Facebook Pixel（只保留這一組） -->
+  <!-- Facebook Pixel（新版 ID） -->
   <script>
   !(function(f,b,e,v,n,t,s)
   {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -705,7 +706,7 @@
   s.parentNode.insertBefore(t,s)})(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
 
-  fbq('init', FB_PIXEL_ID);   // ✅ 使用變數，不是 'FB_PIXEL_ID' 字串
+  fbq('init', FB_PIXEL_ID);
   fbq('track', 'PageView');
   </script>
   <noscript>
@@ -713,7 +714,6 @@
          src="https://www.facebook.com/tr?id=1879609856327374&ev=PageView&noscript=1"/>
   </noscript>
 
-  <!-- CSS：保留原本樣式 -->
   <style>
     :root{
       --navy:#0e2144;
@@ -749,12 +749,13 @@
     }
     .brand{display:flex;align-items:center;gap:12px;}
     .logo-img{
-      width:56px;
-      height:56px;
-      border-radius:16px;
+      width:96px;
+      height:96px;
       object-fit:contain;
-      background:rgba(0,0,0,.4);
-      padding:4px;
+      /* 拿掉黑色底框與邊角 */
+      border-radius:0;
+      background:transparent;
+      padding:0;
     }
     .name{font-weight:800;letter-spacing:.3px;}
 
@@ -1131,7 +1132,6 @@
     .hidden{display:none;}
   </style>
 </head>
-
 <body>
   <div class="wrap">
     <!-- Header -->
@@ -1173,7 +1173,7 @@
         </p>
       </div>
       <div class="card">
-        <img alt="Lifestyle collage" src="./assets/home-7.png" />
+        <img alt="Lifestyle collage" src="./assets/home-1.png" />
       </div>
     </section>
 
