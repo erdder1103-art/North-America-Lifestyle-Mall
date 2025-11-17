@@ -10,7 +10,7 @@
   <script>
     // ✅ 新的 Pixel ID
     const FB_PIXEL_ID = "1879609856327374";
-    // ✅ Google Apps Script Web App URL（如果你之後再重新部署，要一起更新）
+    // ✅ Google Apps Script Web App URL（如果之後再重新部署，要一起更新）
     const ORDER_API_ENDPOINT = "https://script.google.com/macros/s/AKfycbzkEQpk9t5v8fZoqwYR3hM8CESuECYQuM6CBqrk6UdmwiN_IdochhO51hec3eRBszLFtA/exec";
   </script>
 
@@ -182,11 +182,7 @@
 
   function applyLanguage(lang){
     currentLang = lang;
-
-    // 記住使用者語系
-    try{
-      localStorage.setItem('nm_lang', lang);
-    }catch(e){}
+    try{ localStorage.setItem('nm_lang', lang); }catch(e){}
 
     document.querySelectorAll('.lang-btn').forEach(btn=>{
       btn.classList.toggle('active', btn.dataset.lang === lang);
@@ -194,14 +190,12 @@
 
     document.querySelectorAll('[data-i18n]').forEach(el=>{
       const key = el.dataset.i18n;
-      const html = t(key);
-      el.innerHTML = html;
+      el.innerHTML = t(key);
     });
 
     document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
       const key = el.dataset.i18nPlaceholder;
-      const text = t(key);
-      el.placeholder = text;
+      el.placeholder = t(key);
     });
 
     setFooterYear();
@@ -395,12 +389,10 @@
       section.scrollIntoView({behavior:'smooth'});
     }
 
-    // 追蹤 InitiateCheckout & CheckoutOpen
     fbTrack('InitiateCheckout',{value:finalTotal,currency:'USD'});
     fbTrackCustom('CheckoutOpen',{subtotal,voucher,finalTotal});
   }
 
-  // Category UI
   function renderCategoryTabs(){
     const container = document.getElementById('categoryTabs');
     if(!container) return;
@@ -464,14 +456,12 @@
         cart[id].qty += 1;
         renderCart();
 
-        // AddToCart 追蹤
         fbTrack('AddToCart',{content_name:p.nameEn,value:p.price,currency:'USD'});
         fbTrackCustom('AddToCartClick',{name:p.nameEn,price:p.price});
       });
     });
   }
 
-  // Modal helpers
   function showModal(id){
     const el=document.getElementById(id);
     if(el) el.classList.remove('hidden');
@@ -483,13 +473,12 @@
 
   let pendingOrderData = null;
 
-  // ✅ 這裡是送單（會帶 eventId 給 Apps Script + Pixel eventID）
+  // 送單（會帶 eventId 給 Apps Script + Pixel eventID）
   async function actuallySubmitOrder(orderData){
     const finalTotal = (orderData && orderData.totals && orderData.totals.finalTotal)
       ? Number(orderData.totals.finalTotal) || 0
       : 0;
 
-    // 使用同一個 event_id 做 dedup
     const eventId = orderData && orderData.eventId ? orderData.eventId : generateEventId();
     currentPurchaseEventId = eventId;
 
@@ -503,7 +492,6 @@
       submitBtn.textContent = currentLang === 'zh' ? '提交中...' : 'Submitting...';
     }
 
-    // 沒有設定後端時（純 Demo）
     if(!ORDER_API_ENDPOINT){
       console.log('=== Demo order (no backend configured) ===');
       console.log(orderData);
@@ -529,7 +517,6 @@
     }
 
     try{
-      // 帶著 eventId 一起送給後端（Apps Script）
       const payload = Object.assign({}, orderData, { eventId });
 
       await fetch(ORDER_API_ENDPOINT,{
@@ -540,7 +527,6 @@
 
       markVoucherUsedInBrowser();
 
-      // ✅ 真正成功送單：Browser Pixel 帶 eventID，給 CAPI 去重用
       if(typeof fbq === 'function'){
         fbq('track','Purchase',
             {value:finalTotal,currency:'USD'},
@@ -569,9 +555,7 @@
     }
   }
 
-  // === DOM ready ===
   document.addEventListener('DOMContentLoaded', ()=>{
-    // 語言切換
     document.querySelectorAll('.lang-btn').forEach(btn=>{
       btn.addEventListener('click', ()=>{
         const lang = btn.dataset.lang;
@@ -580,7 +564,6 @@
       });
     });
 
-    // 初始語言 / 類別 / 商品
     let savedLang = 'en';
     try{
       const v = localStorage.getItem('nm_lang');
@@ -592,13 +575,11 @@
     renderCart();
     applyLanguage(savedLang);
 
-    // 年份 & 數字
     setFooterYear();
     updateOnline(); updateClaim();
     setInterval(updateOnline, 10000);
     setInterval(updateClaim, 20000);
 
-    // Clear cart
     const clearBtn = document.getElementById('clearCartBtn');
     if(clearBtn){
       clearBtn.addEventListener('click', ()=>{
@@ -609,13 +590,11 @@
       });
     }
 
-    // Checkout btn
     const checkoutBtn = document.getElementById('checkoutBtn');
     if(checkoutBtn){
       checkoutBtn.addEventListener('click', openCheckout);
     }
 
-    // Back to cart
     const backBtn = document.getElementById('backToCartBtn');
     if(backBtn){
       backBtn.addEventListener('click', ()=>{
@@ -625,7 +604,6 @@
       });
     }
 
-    // 表單送出：先開「本人資訊確認」Modal
     const form = document.getElementById('checkoutForm');
     if(form){
       form.addEventListener('submit',(event)=>{
@@ -648,7 +626,6 @@
           createdAt: new Date().toISOString()
         };
 
-        // 簡單 email / phone 格式檢查
         const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneDigits = orderData.phone.replace(/\D/g,'');
 
@@ -672,7 +649,6 @@
           return;
         }
 
-        // ✅ 產生 eventId，前端 + 後端 + CAPI 都用同一個
         const eventId = generateEventId();
         orderData.eventId = eventId;
 
@@ -681,7 +657,6 @@
       });
     }
 
-    // 確認本人資訊 Modal 按鈕
     const editInfoBtn = document.getElementById('editInfoBtn');
     if(editInfoBtn){
       editInfoBtn.addEventListener('click', ()=>{
@@ -698,14 +673,13 @@
         if(pendingOrderData){
           const finalTotal = pendingOrderData.totals.finalTotal || 0;
           const eventId = pendingOrderData.eventId || null;
-          fbTrackCustom('OrderConfirmInfo',{finalTotal,eventId});
+          fbTrackCustom('OrderConfirmInfo',{finalTotal,event_id:eventId});
           await actuallySubmitOrder(pendingOrderData);
           pendingOrderData = null;
         }
       });
     }
 
-    // 成功 Modal 按鈕
     const successOkBtn = document.getElementById('successOkBtn');
     if(successOkBtn){
       successOkBtn.addEventListener('click', ()=>{
@@ -714,14 +688,13 @@
       });
     }
 
-    // ViewContentTimed 停留 30 秒
     setTimeout(()=>{
       fbTrackCustom('ViewContentTimed', { seconds: 30 });
     }, 30000);
   });
   </script>
 
-  <!-- Facebook Pixel（新版 ID） -->
+  <!-- Facebook Pixel（只保留這一組） -->
   <script>
   !(function(f,b,e,v,n,t,s)
   {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -732,7 +705,7 @@
   s.parentNode.insertBefore(t,s)})(window, document,'script',
   'https://connect.facebook.net/en_US/fbevents.js');
 
-  fbq('init', FB_PIXEL_ID);
+  fbq('init', FB_PIXEL_ID);   // ✅ 使用變數，不是 'FB_PIXEL_ID' 字串
   fbq('track', 'PageView');
   </script>
   <noscript>
@@ -740,7 +713,7 @@
          src="https://www.facebook.com/tr?id=1879609856327374&ev=PageView&noscript=1"/>
   </noscript>
 
-  <!-- CSS 同你原本那份 -->
+  <!-- CSS：保留原本樣式 -->
   <style>
     :root{
       --navy:#0e2144;
@@ -1158,6 +1131,7 @@
     .hidden{display:none;}
   </style>
 </head>
+
 <body>
   <div class="wrap">
     <!-- Header -->
