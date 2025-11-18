@@ -8,736 +8,898 @@
 
   <!-- 全站設定：Pixel ID + 後端 API URL -->
   <script>
-    // ✅ 新的 Pixel ID
     const FB_PIXEL_ID = "1879609856327374";
-    // ✅ Google Apps Script Web App URL（之後重新部署要一起更新）
     const ORDER_API_ENDPOINT = "https://script.google.com/macros/s/AKfycbzkEQpk9t5v8fZoqwYR3hM8CESuECYQuM6CBqrk6UdmwiN_IdochhO51hec3eRBszLFtA/exec";
   </script>
 
-  <!-- 主邏輯（語系、商品、購物車、送單 + eventId） -->
+  <!-- 主邏輯（語系、商品、購物車、送單 + eventId + 倒數 + 懸浮購物車） -->
   <script>
-// === 多語系字串 ===
-const I18N = {
-  en: {
-    'brand.name': 'North America Lifestyle Mall',
-    'ribbon.main': '🎁 New users enjoy a $50 welcome voucher. It will be applied automatically at checkout and can be redeemed once per customer.',
-    'ribbon.sub': 'Start your curated shopping journey with factory-direct deals and exclusive offers.',
-    'ribbon.online': '👥 Shoppers online: <span id="onlineCount">--</span>',
-    'ribbon.claimed': '🔔 Vouchers claimed today: <span id="claimCount">--</span>',
-    'hero.title': 'Your lifestyle, your rewards.',
-    'hero.sub': 'Every week we release new limited-time deals. All products are sourced directly from partner factories and brands, cutting out middlemen so you pay less. Feel free to compare prices — we let real discounts speak for themselves.',
-    'products.heading': 'Featured Picks',
-    'cat.gaming': 'Gaming Zone',
-    'cat.appliance': 'Home Appliances',
-    'btn.addToCart': 'Add to Cart',
-    'cart.title': 'Your Cart',
-    'cart.empty': 'No items yet. Add products to your cart.',
-    'cart.total': 'Total',
-    'cart.checkout': 'Checkout',
-    'cart.clear': 'Clear',
-    'cart.hint': 'At checkout, a $50 welcome voucher will be applied automatically for first-time users.',
-    'checkout.title': 'Order & Delivery Details',
-    'checkout.selection': 'Your selection',
-    'checkout.subtotal': 'Subtotal',
-    'checkout.voucher': 'Voucher (up to $50 off)',
-    'checkout.final': 'Final amount',
-    'checkout.note': 'The voucher is applied automatically. You enjoy <strong>use now, pay later</strong> with a 7-day trial period — if you\'re not satisfied, we can help with returns.',
-    'form.fullNameLabel': 'Full Name / Name (must be the buyer)',
-    'form.emailLabel': 'Email Address',
-    'form.phoneLabel': 'Mobile Phone',
-    'form.addressLabel': 'Delivery Address',
-    'form.noteLabel': 'Notes (optional)',
-    'form.noteBlock': 'Please make sure to fill in your own real name, email, phone number and address. Returns and refunds can only be processed after verifying your personal information to protect your rights. We offer <strong>use now, pay later</strong> and a <strong>7-day trial period</strong>. Your information is used only for this order and customer support, and will not be shared publicly.',
-    'form.submit': 'Submit Order',
-    'form.back': 'Back to Cart',
-    'ph.fullName': 'Please enter your full name',
-    'ph.email': 'example@email.com',
-    'ph.phone': 'e.g. +1 555 123 4567',
-    'ph.address': 'Street, city, state, ZIP',
-    'ph.note': 'e.g. preferred delivery time or building access info',
-    'footer.textPrefix': '© <span id="year"></span> North America Lifestyle Mall',
-    'modal.confirm.title': 'Please confirm your information',
-    'modal.confirm.body': 'Please confirm that all information you filled in (name, email, phone and address) belongs to you. Returns and refunds can only be processed after verifying the buyer\'s personal information to protect your rights.',
-    'modal.confirm.confirmBtn': 'Yes, this is my information',
-    'modal.confirm.editBtn': 'Edit information',
-    'modal.success.title': 'Order submitted successfully',
-    'modal.success.body': 'Your order has been successfully submitted. We will email your detailed order information within 1–3 business days for confirmation.',
-    'modal.success.okBtn': 'OK',
-    'alert.cartEmpty': 'Your cart is empty, please add items first.',
-    'alert.missingFields': 'Please fill in your name, email, phone and delivery address.',
-    'alert.networkError': 'Submission failed. Please try again later or contact us for assistance.'
-  },
-  zh: {
-    'brand.name': '北美生活优选商城',
-    'ribbon.main': '🎁 新用户享有 $50 欢迎优惠券，在购物车结账时自动折抵，每位用户限领一次。',
-    'ribbon.sub': '开启你的精选购物之旅，所有商品由合作工厂直供，价格透明欢迎比价。',
-    'ribbon.online': '👥 当前在线购物人数：<span id="onlineCount">--</span>',
-    'ribbon.claimed': '🔔 今日已领取优惠券：<span id="claimCount">--</span>',
-    'hero.title': '你的生活方式，你的专属回馈',
-    'hero.sub': '每周都会有新的优惠产品释出，所有商品皆由合作工厂与品牌直供，少了中间通路成本，价格更实在。欢迎你多方比价，我们用真实折扣说话。',
-    'products.heading': '精选好物推荐',
-    'cat.gaming': '电竞专区',
-    'cat.appliance': '家电精选',
-    'btn.addToCart': '加入购物车',
-    'cart.title': '购物车',
-    'cart.empty': '购物车目前为空，请先加入商品。',
-    'cart.total': '合计',
-    'cart.checkout': '去结账',
-    'cart.clear': '清空',
-    'cart.hint': '结账时，新用户的 $50 欢迎优惠券会自动折抵，仅限领取一次。',
-    'checkout.title': '订单与配送资讯',
-    'checkout.selection': '您的选择',
-    'checkout.subtotal': '小计',
-    'checkout.voucher': '优惠券（最高减 $50）',
-    'checkout.final': '应付金额',
-    'checkout.note': '系统会自动套用优惠券，您享有<strong>先使用后付款</strong>与<strong>7 天试用期</strong>，如不满意我们可协助退货。',
-    'form.fullNameLabel': 'Full Name / 姓名（须为购买人本人）',
-    'form.emailLabel': 'Email Address / 电子邮箱',
-    'form.phoneLabel': 'Mobile Phone / 手机号码',
-    'form.addressLabel': 'Delivery Address / 收货地址',
-    'form.noteLabel': 'Notes（选填）/ 备注',
-    'form.noteBlock': '请务必填写<b>本人真实姓名、电子邮箱、手机号码与收货地址</b>，退货与退款仅能以购买者本人资料办理，以保障您的权益。我们提供<strong>先使用后付款</strong>与<strong>7 天试用期</strong>，您的资讯仅用于本次订单与客服联络，不会对外公开。',
-    'form.submit': '提交订单',
-    'form.back': '返回购物车',
-    'ph.fullName': '请填写您的姓名',
-    'ph.email': '请输入常用电子邮箱',
-    'ph.phone': '请填写本人手机号码',
-    'ph.address': '详细收货地址（街道／城市／州／邮编）',
-    'ph.note': '例如：希望送达时间、门禁或大楼出入说明',
-    'footer.textPrefix': '© <span id="year"></span> 北美生活优选商城',
-    'modal.confirm.title': '确认是否为本人资讯',
-    'modal.confirm.body': '请再次确认您填写的姓名、邮箱、手机与收货地址均为本人真实资讯。如需办理退货或退款，仅能以购买者本人资料进行核对，以保障您的权益。',
-    'modal.confirm.confirmBtn': '确认以上资讯为本人',
-    'modal.confirm.editBtn': '返回修改资料',
-    'modal.success.title': '订单已成功送出',
-    'modal.success.body': '您的订单已成功提交，我们会在 1–3 个工作天内，将订单明细发送至您的电子邮箱以供确认。',
-    'modal.success.okBtn': '我知道了',
-    'alert.cartEmpty': '购物车目前为空，请先加入商品。',
-    'alert.missingFields': '请完整填写姓名、电子邮箱、手机号码与收货地址。',
-    'alert.networkError': '提交失败，请稍后再试或联系客户服务协助。'
-  }
-};
+  // === 多語系字串 ===
+  const I18N = {
+    en: {
+      'brand.name': 'North America Lifestyle Mall',
 
-let currentLang = 'en';
-// ⚠️ 類別預設先給 home，等 DOMContentLoaded 再從 localStorage 覆蓋
-let currentCategory = 'gaming';
-let isSubmittingOrder = false;
-let currentPurchaseEventId = null;
+      'ribbon.main': '🎁 New users enjoy a $50 welcome voucher. It will be applied automatically at checkout and can be redeemed once per customer.',
+      'ribbon.sub': 'Start your curated shopping journey with factory-direct deals and exclusive offers.',
+      'ribbon.online': '👥 Shoppers online: <span id="onlineCount">--</span>',
+      'ribbon.claimed': '🔔 Vouchers claimed today: <span id="claimCount">--</span>',
 
-// 產生去重用的 event_id
-function generateEventId(){
-  return 'ev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2,10);
-}
+      'promo.bar.label': '⚡ Last chance! New users limited-time $50 voucher – automatically applied to your cart total. Offer ends in',
+      'promo.expired': 'Offer ended',
+      'promo.modal.title': 'Last chance: $50 new user voucher',
+      'promo.modal.body': 'New users get a one-time $50 voucher that is automatically applied to your cart at checkout. This offer is counting down – once the timer hits 00:00:00, this discount disappears.',
+      'promo.modal.timerPrefix': 'Time left in this offer',
+      'promo.modal.confirm': 'OK, I will grab it in time',
 
-// 小工具：安全呼叫 fbq
-function fbTrack(eventName, params){
-  if(typeof fbq === 'function'){
-    fbq('track', eventName, params || {});
-  }
-}
-function fbTrackCustom(eventName, params){
-  if(typeof fbq === 'function'){
-    fbq('trackCustom', eventName, params || {});
-  }
-}
+      'hero.title': 'Your lifestyle, your rewards.',
+      'hero.sub': 'Every week we release new limited-time deals. All products are sourced directly from partner factories and brands, cutting out middlemen so you pay less. Feel free to compare prices — we let real discounts speak for themselves.',
 
-function t(key){
-  return (I18N[currentLang] && I18N[currentLang][key]) ||
-         (I18N.en && I18N.en[key]) || key;
-}
+      'products.heading': 'Featured Picks',
 
-function setFooterYear(){
-  const y = document.getElementById('year');
-  if(y){ y.textContent = new Date().getFullYear(); }
-}
+      'cat.gaming': 'Gaming Zone',
+      'cat.appliance': 'Home Appliances',
 
-function applyLanguage(lang){
-  currentLang = lang;
+      'btn.addToCart': 'Add to Cart',
 
-  try{
-    localStorage.setItem('nm_lang', lang);
-  }catch(e){}
+      'cart.title': 'Your Cart',
+      'cart.empty': 'No items yet. Add products to your cart.',
+      'cart.total': 'Total',
+      'cart.checkout': 'Checkout',
+      'cart.clear': 'Clear',
+      'cart.hint': 'At checkout, a $50 welcome voucher will be applied automatically for first-time users while the offer is active.',
 
-  document.querySelectorAll('.lang-btn').forEach(btn=>{
-    btn.classList.toggle('active', btn.dataset.lang === lang);
-  });
+      'checkout.title': 'Order & Delivery Details',
+      'checkout.selection': 'Your selection',
+      'checkout.subtotal': 'Subtotal',
+      'checkout.voucher': 'Voucher (up to $50 off)',
+      'checkout.final': 'Final amount',
+      'checkout.note': 'The voucher is applied automatically if the offer is still active. You enjoy <strong>use now, pay later</strong> with a 7-day trial period — if you\'re not satisfied, we can help with returns.',
 
-  document.querySelectorAll('[data-i18n]').forEach(el=>{
-    const key = el.dataset.i18n;
-    const html = t(key);
-    el.innerHTML = html;
-  });
+      'form.fullNameLabel': 'Full Name / Name (must be the buyer)',
+      'form.emailLabel': 'Email Address',
+      'form.phoneLabel': 'Mobile Phone',
+      'form.addressLabel': 'Delivery Address',
+      'form.noteLabel': 'Notes (optional)',
+      'form.noteBlock': 'Please make sure to fill in your own real name, email, phone number and address. Returns and refunds can only be processed after verifying your personal information to protect your rights. We offer <strong>use now, pay later</strong> and a <strong>7-day trial period</strong>. Your information is used only for this order and customer support, and will not be shared publicly.',
+      'form.submit': 'Submit Order',
+      'form.back': 'Back to Cart',
 
-  document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
-    const key = el.dataset.i18nPlaceholder;
-    const text = t(key);
-    el.placeholder = text;
-  });
+      'ph.fullName': 'Please enter your full name',
+      'ph.email': 'example@email.com',
+      'ph.phone': 'e.g. +1 555 123 4567',
+      'ph.address': 'Street, city, state, ZIP',
+      'ph.note': 'e.g. preferred delivery time or building access info',
 
-  setFooterYear();
-  // 語言切換後，需要重繪類別 tabs / 商品 / 購物車，商品名稱才會換語系
-  renderCategoryTabs();
-  renderProductsGrid();
-  renderCart();
-}
+      'footer.textPrefix': '© <span id="year"></span> North America Lifestyle Mall',
 
-// 類別 & 商品
-const CATEGORIES = [
-  { id:'gaming',    number:1, labelKey:'cat.gaming' },
-  { id:'appliance', number:2, labelKey:'cat.appliance' },
-];
+      'modal.confirm.title': 'Please confirm your information',
+      'modal.confirm.body': 'Please confirm that all information you filled in (name, email, phone and address) belongs to you. Returns and refunds can only be processed after verifying the buyer\'s personal information to protect your rights.',
+      'modal.confirm.confirmBtn': 'Yes, this is my information',
+      'modal.confirm.editBtn': 'Edit information',
 
-const PRODUCTS = {
-    gaming: [
-    { id:'gaming1', price:125, image:'./assets/gaming-1.png', alt:'Gaming headset',   nameEn:'ROG Delta II Wireless Gaming Headset',        nameZh:'ROG Delta II 无线游戏耳机' },
-    { id:'gaming2', price:69, image:'./assets/gaming-2.png', alt:'Mechanical kb',    nameEn:'ROG STRIX SCOPE II Gaming Keyboard', nameZh:'ROG STRIX SCOPE II 游戏键盘' },
-    { id:'gaming3', price:83, image:'./assets/gaming-3.png', alt:'Gaming mouse',     nameEn:'ROG KERIS II ORIGIN Wireless Gaming Mouse',    nameZh:'ROG KERIS II ORIGIN 无线游戏鼠标' },
-    { id:'gaming4', price:100, image:'./assets/gaming-4.png', alt:'Controller set',   nameEn:'ROG RAIKIRI Wireless Joystick',   nameZh:'ROG RAIKIRI 无线摇杆' },
-    { id:'gaming5', price:149, image:'./assets/gaming-5.png', alt:'RGB desk set',     nameEn:'RGB carbon fiber electric height-adjustable desk',        nameZh:'RGB碳纤维电动升降桌' },
-    { id:'gaming6', price:131, image:'./assets/gaming-6.png', alt:'Streaming mic',    nameEn:'ROG Carnyx Gaming Microphone RGB',      nameZh:'ROG Carnyx RGB 游戏麦克风' }
-  ],
-  appliance: [
-    { id:'app1', price:224, image:'./assets/appliance-1.png', alt:'Blender',       nameEn:'JOYOUNG No-Cleaning Multi-Functional Blender',    nameZh:'JOYOUNG-免清洗多功能调理机' },
-    { id:'app2', price:49, image:'./assets/appliance-2.png', alt:'Air fryer',     nameEn:'Cuisinart-Multi-functional air fryer',           nameZh:'Cuisinart-多功能空气炸锅' },
-    { id:'app3', price:150, image:'./assets/appliance-3.png', alt:'Coffee maker',  nameEn:'OSTER Coffee Machine',      nameZh:'OSTER-咖啡机' },
-    { id:'app4', price:380, image:'./assets/appliance-4.png', alt:'Vacuum',        nameEn:'Dyson V12s Detect Slim Submarine',   nameZh:'Dyson V12s无线吸尘器' }
-  ],
+      'modal.success.title': 'Order submitted successfully',
+      'modal.success.body': 'Your order has been successfully submitted. We will email your detailed order information within 1–3 business days for confirmation.',
+      'modal.success.okBtn': 'OK',
+
+      'alert.cartEmpty': 'Your cart is empty, please add items first.',
+      'alert.missingFields': 'Please fill in your name, email, phone and delivery address.',
+      'alert.networkError': 'Submission failed. Please try again later or contact us for assistance.'
+    },
+    zh: {
+      'brand.name': '北美生活优选商城',
+
+      'ribbon.main': '🎁 新用户享有 $50 欢迎优惠券，在购物车结账时自动折抵，每位用户限领一次。',
+      'ribbon.sub': '开启你的精选购物之旅，所有商品由合作工厂直供，价格透明欢迎比价。',
+      'ribbon.online': '👥 当前在线购物人数：<span id="onlineCount">--</span>',
+      'ribbon.claimed': '🔔 今日已领取优惠券：<span id="claimCount">--</span>',
+
+      'promo.bar.label': '⚡ 最后机会！新用户限时 $50 优惠，结账时自动折抵购物车金额，优惠倒数中：',
+      'promo.expired': '优惠已结束',
+      'promo.modal.title': '最后机会：新用户限时 $50 优惠',
+      'promo.modal.body': '新用户享有一次性 $50 折抵，系统会在结账时自动从购物车金额扣除。优惠正在倒数中，一旦时间归零，这个折扣就会消失！',
+      'promo.modal.timerPrefix': '本次优惠剩余时间',
+      'promo.modal.confirm': '我知道了，赶快去选商品',
+
+      'hero.title': '你的生活方式，你的专属回馈',
+      'hero.sub': '每周都会有新的优惠产品释出，所有商品皆由合作工厂与品牌直供，少了中间通路成本，价格更实在。欢迎你多方比价，我们用真实折扣说话。',
+
+      'products.heading': '精选好物推荐',
+
+      'cat.gaming': '电竞专区',
+      'cat.appliance': '家电精选',
+
+      'btn.addToCart': '加入购物车',
+
+      'cart.title': '购物车',
+      'cart.empty': '购物车目前为空，请先加入商品。',
+      'cart.total': '合计',
+      'cart.checkout': '去结账',
+      'cart.clear': '清空',
+      'cart.hint': '结账时，在优惠倒数期间的新用户 $50 欢迎优惠券会自动折抵，仅限领取一次。',
+
+      'checkout.title': '订单与配送资讯',
+      'checkout.selection': '您的选择',
+      'checkout.subtotal': '小计',
+      'checkout.voucher': '优惠券（最高减 $50）',
+      'checkout.final': '应付金额',
+      'checkout.note': '在优惠有效期间，系统会自动套用优惠券。您享有<strong>先使用后付款</strong>与<strong>7 天试用期</strong>，如不满意我们可协助退货。',
+
+      'form.fullNameLabel': 'Full Name / 姓名（须为购买人本人）',
+      'form.emailLabel': 'Email Address / 电子邮箱',
+      'form.phoneLabel': 'Mobile Phone / 手机号码',
+      'form.addressLabel': 'Delivery Address / 收货地址',
+      'form.noteLabel': 'Notes（选填）/ 备注',
+      'form.noteBlock': '请务必填写<b>本人真实姓名、电子邮箱、手机号码与收货地址</b>，退货与退款仅能以购买者本人资料办理，以保障您的权益。我们提供<strong>先使用后付款</strong>与<strong>7 天试用期</strong>，您的资讯仅用于本次订单与客服联络，不会对外公开。',
+      'form.submit': '提交订单',
+      'form.back': '返回购物车',
+
+      'ph.fullName': '请填写您的姓名',
+      'ph.email': '请输入常用电子邮箱',
+      'ph.phone': '请填写本人手机号码',
+      'ph.address': '详细收货地址（街道／城市／州／邮编）',
+      'ph.note': '例如：希望送达时间、门禁或大楼出入说明',
+
+      'footer.textPrefix': '© <span id="year"></span> 北美生活优选商城',
+
+      'modal.confirm.title': '确认是否为本人资讯',
+      'modal.confirm.body': '请再次确认您填写的姓名、邮箱、手机与收货地址均为本人真实资讯。如需办理退货或退款，仅能以购买者本人资料进行核对，以保障您的权益。',
+      'modal.confirm.confirmBtn': '确认以上资讯为本人',
+      'modal.confirm.editBtn': '返回修改资料',
+
+      'modal.success.title': '订单已成功送出',
+      'modal.success.body': '您的订单已成功提交，我们会在 1–3 个工作天内，将订单明细发送至您的电子邮箱以供确认。',
+      'modal.success.okBtn': '我知道了',
+
+      'alert.cartEmpty': '购物车目前为空，请先加入商品。',
+      'alert.missingFields': '请完整填写姓名、电子邮箱、手机号码与收货地址。',
+      'alert.networkError': '提交失败，请稍后再试或联系客户服务协助。'
+    }
   };
 
-function getProductsForCategory(id){
-  return PRODUCTS[id] || [];
-}
+  let currentLang = 'en';
+  let currentCategory = 'gaming';
+  let isSubmittingOrder = false;
+  let currentPurchaseEventId = null;
 
-function findProductById(id){
-  for(const catId in PRODUCTS){
-    const p = PRODUCTS[catId].find(x=>x.id===id);
-    if(p) return p;
-  }
-  return null;
-}
+  // 優惠倒數（2 小時）
+  let promoEndTime = null; // timestamp(ms)
 
-// Ribbon 假統計
-function updateOnline(){
-  const n = Math.floor(209 + Math.random()*180);
-  const el = document.getElementById('onlineCount');
-  if(el) el.textContent = n;
-}
-function updateClaim(){
-  const n = Math.floor(620 + Math.random()*200);
-  const el = document.getElementById('claimCount');
-  if(el) el.textContent = n;
-}
-
-// 購物車
-const cart = {};
-
-function hasUsedVoucherInBrowser(){
-  try{return localStorage.getItem('nm_voucher_used') === '1';}
-  catch(e){return false;}
-}
-function markVoucherUsedInBrowser(){
-  try{localStorage.setItem('nm_voucher_used','1');}
-  catch(e){}
-}
-
-function renderCart(){
-  const container = document.getElementById('cartItems');
-  const totalEl = document.getElementById('cartTotal');
-  if(!container || !totalEl) return;
-  container.innerHTML = '';
-
-  const ids = Object.keys(cart);
-  if(!ids.length){
-    const empty = document.createElement('div');
-    empty.className = 'cart-empty';
-    empty.textContent = t('cart.empty');
-    container.appendChild(empty);
-    totalEl.textContent = '0';
-    return;
+  function generateEventId(){
+    return 'ev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2,10);
   }
 
-  let total = 0;
-  ids.forEach(id=>{
-    const item = cart[id];
-    const linePrice = item.price * item.qty;
-    total += linePrice;
-    const displayName = currentLang === 'zh' ? item.nameZh : item.nameEn;
-
-    const row = document.createElement('div');
-    row.className = 'cart-row';
-    row.innerHTML = `
-      <div class="cart-row-name">${displayName}</div>
-      <div class="cart-row-qty">
-        <button type="button" data-id="${id}" data-delta="-1" class="qty-btn">−</button>
-        <span>${item.qty}</span>
-        <button type="button" data-id="${id}" data-delta="1" class="qty-btn">+</button>
-      </div>
-      <div class="cart-row-price">$${linePrice}</div>
-    `;
-    container.appendChild(row);
-  });
-
-  totalEl.textContent = total.toString();
-
-  container.querySelectorAll('.qty-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const id = btn.dataset.id;
-      const delta = parseInt(btn.dataset.delta,10);
-      if(cart[id]){
-        cart[id].qty += delta;
-        if(cart[id].qty <= 0){ delete cart[id]; }
-        renderCart();
-      }
-    });
-  });
-}
-
-function getCartItemsArray(){
-  return Object.keys(cart).map(id=>({
-    id,
-    nameEn: cart[id].nameEn,
-    nameZh: cart[id].nameZh,
-    price: cart[id].price,
-    qty: cart[id].qty
-  }));
-}
-
-function getCartTotals(){
-  const items = getCartItemsArray();
-  let subtotal = 0;
-  items.forEach(it=> subtotal += it.price * it.qty);
-
-  const voucherBeforeLimit = Math.min(50, subtotal);
-  const voucher = hasUsedVoucherInBrowser() ? 0 : voucherBeforeLimit;
-  const finalTotal = subtotal - voucher;
-
-  return { items, subtotal, voucher, finalTotal };
-}
-
-function openCheckout(){
-  const { items, subtotal, voucher, finalTotal } = getCartTotals();
-  if(!items.length){
-    alert(t('alert.cartEmpty'));
-    return;
-  }
-
-  const listEl = document.getElementById('checkoutItemsList');
-  const subEl = document.getElementById('checkoutSubtotal');
-  const voucherEl = document.getElementById('checkoutVoucher');
-  const finalEl = document.getElementById('checkoutFinal');
-  if(!listEl || !subEl || !voucherEl || !finalEl) return;
-
-  listEl.innerHTML = '';
-
-  items.forEach(it=>{
-    const displayName = currentLang === 'zh' ? it.nameZh : it.nameEn;
-    const li = document.createElement('li');
-    li.textContent = `${displayName} x${it.qty} ($${it.price})`;
-    listEl.appendChild(li);
-  });
-
-  subEl.textContent = subtotal.toString();
-  voucherEl.textContent = voucher.toString();
-  finalEl.textContent = finalTotal.toString();
-
-  const section = document.getElementById('checkoutSection');
-  if(section){
-    section.classList.remove('hidden');
-    section.scrollIntoView({behavior:'smooth'});
-  }
-
-  fbTrack('InitiateCheckout',{value:finalTotal,currency:'USD'});
-  fbTrackCustom('CheckoutOpen',{subtotal,voucher,finalTotal});
-}
-
-// Category UI
-function renderCategoryTabs(){
-  const container = document.getElementById('categoryTabs');
-  if(!container) return;
-  container.innerHTML = '';
-
-  CATEGORIES.forEach(cat=>{
-    const tab = document.createElement('button');
-    tab.type = 'button';
-    tab.className = 'category-tab' + (cat.id === currentCategory ? ' active':'');
-    tab.dataset.id = cat.id;
-    tab.innerHTML = `
-      <span class="category-tab-number">${cat.number}</span>
-      <span>${t(cat.labelKey)}</span>
-    `;
-    tab.addEventListener('click', ()=>{
-      currentCategory = cat.id;
-
-      // ✅ 這裡記住使用者選的是哪個專區
-      try{
-        localStorage.setItem('nm_cat', currentCategory);
-      }catch(e){}
-
-      renderCategoryTabs();
-      renderProductsGrid();
-      fbTrackCustom('CategoryClick',{category:cat.id});
-    });
-    container.appendChild(tab);
-  });
-}
-
-function renderProductsGrid(){
-  const grid = document.getElementById('productsGrid');
-  if(!grid) return;
-  grid.innerHTML = '';
-
-  const products = getProductsForCategory(currentCategory);
-  products.forEach(p=>{
-    const displayName = currentLang === 'zh' ? p.nameZh : p.nameEn;
-    const card = document.createElement('div');
-    card.className = 'product';
-    card.innerHTML = `
-      <img src="${p.image}" alt="${p.alt}">
-      <div class="panel">
-        <div class="title">${displayName}</div>
-        <div class="price">$${p.price}</div>
-        <button class="btn add-to-cart" type="button" data-id="${p.id}">
-          ${t('btn.addToCart')}
-        </button>
-      </div>
-    `;
-    grid.appendChild(card);
-  });
-
-  // 加入購物車
-  grid.querySelectorAll('.add-to-cart').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const id = btn.dataset.id;
-      const p = findProductById(id);
-      if(!p) return;
-      if(!cart[id]){
-        cart[id] = {
-          nameEn:p.nameEn,
-          nameZh:p.nameZh,
-          price:p.price,
-          qty:0
-        };
-      }
-      cart[id].qty += 1;
-      renderCart();
-
-      fbTrack('AddToCart',{content_name:p.nameEn,value:p.price,currency:'USD'});
-      fbTrackCustom('AddToCartClick',{name:p.nameEn,price:p.price});
-    });
-  });
-
-  // 點商品圖片 → 放大顯示（不會影響購物車）
-  grid.querySelectorAll('.product img').forEach(img=>{
-    img.style.cursor = 'zoom-in';
-    img.addEventListener('click', ()=>{
-      openImageLightbox(img.src, img.alt);
-      fbTrackCustom('ImageZoom',{src: img.src});
-    });
-  });
-}
-
-// Modal helpers
-function showModal(id){
-  const el=document.getElementById(id);
-  if(el) el.classList.remove('hidden');
-}
-function hideModal(id){
-  const el=document.getElementById(id);
-  if(el) el.classList.add('hidden');
-}
-
-// 圖片燈箱
-function openImageLightbox(src, alt){
-  const overlay = document.getElementById('imageLightbox');
-  const img = document.getElementById('imageLightboxImg');
-  if(!overlay || !img) return;
-  img.src = src;
-  img.alt = alt || '';
-  overlay.classList.remove('hidden');
-}
-
-function closeImageLightbox(){
-  const overlay = document.getElementById('imageLightbox');
-  if(overlay){
-    overlay.classList.add('hidden');
-  }
-}
-
-let pendingOrderData = null;
-
-// 送單
-async function actuallySubmitOrder(orderData){
-  const finalTotal = (orderData && orderData.totals && orderData.totals.finalTotal)
-    ? Number(orderData.totals.finalTotal) || 0
-    : 0;
-
-  const eventId = orderData && orderData.eventId ? orderData.eventId : generateEventId();
-  currentPurchaseEventId = eventId;
-
-  if(isSubmittingOrder) return;
-  isSubmittingOrder = true;
-
-  const submitBtn = document.querySelector('#checkoutForm button[type="submit"]');
-  const originalText = submitBtn ? submitBtn.textContent : '';
-  if(submitBtn){
-    submitBtn.disabled = true;
-    submitBtn.textContent = currentLang === 'zh' ? '提交中...' : 'Submitting...';
-  }
-
-  if(!ORDER_API_ENDPOINT){
-    console.log('=== Demo order (no backend configured) ===');
-    console.log(orderData);
-
+  function fbTrack(eventName, params){
     if(typeof fbq === 'function'){
-      fbq('track','Purchase',
-          {value:finalTotal,currency:'USD'},
-          {eventID:eventId});
-      fbq('track','Lead',
-          {value:finalTotal,currency:'USD'},
-          {eventID:eventId});
-      fbq('trackCustom','OrderSubmitDemo',{finalTotal,eventId});
+      fbq('track', eventName, params || {});
     }
-
-    showModal('successModal');
-
-    if(submitBtn){
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
+  }
+  function fbTrackCustom(eventName, params){
+    if(typeof fbq === 'function'){
+      fbq('trackCustom', eventName, params || {});
     }
-    isSubmittingOrder = false;
-    return;
   }
 
-  try{
-    const payload = Object.assign({}, orderData, { eventId });
+  function t(key){
+    return (I18N[currentLang] && I18N[currentLang][key]) ||
+           (I18N.en && I18N.en[key]) || key;
+  }
 
-    await fetch(ORDER_API_ENDPOINT,{
-      method:'POST',
-      mode:'no-cors',
-      body: JSON.stringify(payload)
+  function setFooterYear(){
+    const y = document.getElementById('year');
+    if(y){ y.textContent = new Date().getFullYear(); }
+  }
+
+  function applyLanguage(lang){
+    currentLang = lang;
+    try{
+      localStorage.setItem('nm_lang', lang);
+    }catch(e){}
+
+    document.querySelectorAll('.lang-btn').forEach(btn=>{
+      btn.classList.toggle('active', btn.dataset.lang === lang);
     });
 
-    markVoucherUsedInBrowser();
+    document.querySelectorAll('[data-i18n]').forEach(el=>{
+      const key = el.dataset.i18n;
+      el.innerHTML = t(key);
+    });
 
-    if(typeof fbq === 'function'){
-      fbq('track','Purchase',
-          {value:finalTotal,currency:'USD'},
-          {eventID:eventId});
-      fbq('track','Lead',
-          {value:finalTotal,currency:'USD'},
-          {eventID:eventId});
-      fbq('trackCustom','OrderSubmit',{finalTotal,eventId});
-    }
+    document.querySelectorAll('[data-i18n-placeholder]').forEach(el=>{
+      const key = el.dataset.i18nPlaceholder;
+      el.placeholder = t(key);
+    });
 
-    for(const k in cart){ delete cart[k]; }
+    setFooterYear();
+    renderCategoryTabs();
+    renderProductsGrid();
     renderCart();
-    const form = document.getElementById('checkoutForm');
-    if(form) form.reset();
-
-    showModal('successModal');
-  }catch(err){
-    console.error('Order submit error:',err);
-    alert(t('alert.networkError'));
-  }finally{
-    if(submitBtn){
-      submitBtn.disabled = false;
-      submitBtn.textContent = originalText;
-    }
-    isSubmittingOrder = false;
+    updatePromoUI(); // 文字會跟語言同步
   }
-}
 
-// DOM ready
-document.addEventListener('DOMContentLoaded', ()=>{
-  // 語言切換按鈕
-  document.querySelectorAll('.lang-btn').forEach(btn=>{
-    btn.addEventListener('click', ()=>{
-      const lang = btn.dataset.lang;
-      applyLanguage(lang);
-      fbTrackCustom('LangSwitch',{lang});
+  // 類別 & 商品
+  const CATEGORIES = [
+    { id:'gaming',    number:1, labelKey:'cat.gaming' },
+    { id:'appliance', number:2, labelKey:'cat.appliance' },
+  ];
+
+  const PRODUCTS = {
+    gaming: [
+      { id:'gaming1', price:125, image:'./assets/gaming-1.png', alt:'Gaming headset',   nameEn:'ROG Delta II Wireless Gaming Headset',        nameZh:'ROG Delta II 无线游戏耳机' },
+      { id:'gaming2', price:69, image:'./assets/gaming-2.png', alt:'Mechanical kb',    nameEn:'ROG STRIX SCOPE II Gaming Keyboard', nameZh:'ROG STRIX SCOPE II 游戏键盘' },
+      { id:'gaming3', price:83, image:'./assets/gaming-3.png', alt:'Gaming mouse',     nameEn:'ROG KERIS II ORIGIN Wireless Gaming Mouse',    nameZh:'ROG KERIS II ORIGIN 无线游戏鼠标' },
+      { id:'gaming4', price:100, image:'./assets/gaming-4.png', alt:'Controller set',   nameEn:'ROG RAIKIRI Wireless Joystick',   nameZh:'ROG RAIKIRI 无线摇杆' },
+      { id:'gaming5', price:149, image:'./assets/gaming-5.png', alt:'RGB desk set',     nameEn:'RGB carbon fiber electric height-adjustable desk',        nameZh:'RGB碳纤维电动升降桌' },
+      { id:'gaming6', price:131, image:'./assets/gaming-6.png', alt:'Streaming mic',    nameEn:'ROG Carnyx Gaming Microphone RGB',      nameZh:'ROG Carnyx RGB 游戏麦克风' }
+    ],
+    appliance: [
+      { id:'app1', price:69, image:'./assets/appliance-1.png', alt:'Blender',       nameEn:'Multi-Function Blender',    nameZh:'多功能料理机' },
+      { id:'app2', price:89, image:'./assets/appliance-2.png', alt:'Air fryer',     nameEn:'Smart Air Fryer',           nameZh:'智能气炸锅' },
+      { id:'app3', price:72, image:'./assets/appliance-3.png', alt:'Coffee maker',  nameEn:'Compact Coffee Maker',      nameZh:'迷你咖啡机' },
+      { id:'app4', price:95, image:'./assets/appliance-4.png', alt:'Vacuum',        nameEn:'Cordless Vacuum Cleaner',   nameZh:'无线吸尘器' },
+      { id:'app5', price:58, image:'./assets/appliance-5.png', alt:'Rice cooker',   nameEn:'Digital Rice Cooker',       nameZh:'数位电子电锅' },
+      { id:'app6', price:76, image:'./assets/appliance-6.png', alt:'Humidifier',    nameEn:'Quiet Air Humidifier',      nameZh:'静音加湿器' }
+    ],
+  };
+
+  function getProductsForCategory(id){
+    return PRODUCTS[id] || [];
+  }
+
+  function findProductById(id){
+    for(const catId in PRODUCTS){
+      const p = PRODUCTS[catId].find(x=>x.id===id);
+      if(p) return p;
+    }
+    return null;
+  }
+
+  // Ribbon 假統計
+  function updateOnline(){
+    const n = Math.floor(209 + Math.random()*180);
+    const el = document.getElementById('onlineCount');
+    if(el) el.textContent = n;
+  }
+  function updateClaim(){
+    const n = Math.floor(620 + Math.random()*200);
+    const el = document.getElementById('claimCount');
+    if(el) el.textContent = n;
+  }
+
+  // 購物車
+  const cart = {};
+
+  function hasUsedVoucherInBrowser(){
+    try{return localStorage.getItem('nm_voucher_used') === '1';}
+    catch(e){return false;}
+  }
+  function markVoucherUsedInBrowser(){
+    try{localStorage.setItem('nm_voucher_used','1');}
+    catch(e){}
+  }
+
+  function updateFloatingCartCount(){
+    const countEl = document.getElementById('floatingCartCount');
+    if(!countEl) return;
+    let totalQty = 0;
+    Object.keys(cart).forEach(id=>{
+      totalQty += cart[id].qty;
     });
-  });
-
-  // 初始語言
-  let savedLang = 'en';
-  try{
-    const v = localStorage.getItem('nm_lang');
-    if(v === 'en' || v === 'zh') savedLang = v;
-  }catch(e){}
-
-  // ✅ 初始類別：從 localStorage 恢復 nm_cat，沒有就用 home
-  try{
-    const savedCat = localStorage.getItem('nm_cat');
-    if(savedCat && PRODUCTS[savedCat]){
-      currentCategory = savedCat;
-    }else{
-      currentCategory = 'gaming';
-    }
-  }catch(e){
-    currentCategory = 'gaming';
+    countEl.textContent = totalQty;
   }
 
-  // 先畫一版，再套用語言
-  renderCategoryTabs();
-  renderProductsGrid();
-  renderCart();
-  applyLanguage(savedLang);
+  function renderCart(){
+    const container = document.getElementById('cartItems');
+    const totalEl = document.getElementById('cartTotal');
+    if(!container || !totalEl) return;
+    container.innerHTML = '';
 
-  setFooterYear();
-  updateOnline(); updateClaim();
-  setInterval(updateOnline, 10000);
-  setInterval(updateClaim, 20000);
+    const ids = Object.keys(cart);
+    if(!ids.length){
+      const empty = document.createElement('div');
+      empty.className = 'cart-empty';
+      empty.textContent = t('cart.empty');
+      container.appendChild(empty);
+      totalEl.textContent = '0';
+      updateFloatingCartCount();
+      return;
+    }
 
-  // 清空購物車
-  const clearBtn = document.getElementById('clearCartBtn');
-  if(clearBtn){
-    clearBtn.addEventListener('click', ()=>{
-      const { items, subtotal } = getCartTotals();
-      fbTrackCustom('CartClear',{itemCount:items.length,subtotal});
+    let total = 0;
+    ids.forEach(id=>{
+      const item = cart[id];
+      const linePrice = item.price * item.qty;
+      total += linePrice;
+      const displayName = currentLang === 'zh' ? item.nameZh : item.nameEn;
+
+      const row = document.createElement('div');
+      row.className = 'cart-row';
+      row.innerHTML = `
+        <div class="cart-row-name">${displayName}</div>
+        <div class="cart-row-qty">
+          <button type="button" data-id="${id}" data-delta="-1" class="qty-btn">−</button>
+          <span>${item.qty}</span>
+          <button type="button" data-id="${id}" data-delta="1" class="qty-btn">+</button>
+        </div>
+        <div class="cart-row-price">$${linePrice}</div>
+      `;
+      container.appendChild(row);
+    });
+
+    totalEl.textContent = total.toString();
+
+    container.querySelectorAll('.qty-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.dataset.id;
+        const delta = parseInt(btn.dataset.delta,10);
+        if(cart[id]){
+          cart[id].qty += delta;
+          if(cart[id].qty <= 0){ delete cart[id]; }
+          renderCart();
+        }
+      });
+    });
+
+    updateFloatingCartCount();
+  }
+
+  function getCartItemsArray(){
+    return Object.keys(cart).map(id=>({
+      id,
+      nameEn: cart[id].nameEn,
+      nameZh: cart[id].nameZh,
+      price: cart[id].price,
+      qty: cart[id].qty
+    }));
+  }
+
+  function isPromoActive(){
+    return promoEndTime && Date.now() < promoEndTime;
+  }
+
+  function getCartTotals(){
+    const items = getCartItemsArray();
+    let subtotal = 0;
+    items.forEach(it=> subtotal += it.price * it.qty);
+
+    const voucherBeforeLimit = Math.min(50, subtotal);
+    const voucher = (!hasUsedVoucherInBrowser() && isPromoActive()) ? voucherBeforeLimit : 0;
+    const finalTotal = subtotal - voucher;
+
+    return { items, subtotal, voucher, finalTotal };
+  }
+
+  function openCheckout(){
+    const { items, subtotal, voucher, finalTotal } = getCartTotals();
+    if(!items.length){
+      alert(t('alert.cartEmpty'));
+      return;
+    }
+
+    const listEl = document.getElementById('checkoutItemsList');
+    const subEl = document.getElementById('checkoutSubtotal');
+    const voucherEl = document.getElementById('checkoutVoucher');
+    const finalEl = document.getElementById('checkoutFinal');
+    if(!listEl || !subEl || !voucherEl || !finalEl) return;
+
+    listEl.innerHTML = '';
+    items.forEach(it=>{
+      const displayName = currentLang === 'zh' ? it.nameZh : it.nameEn;
+      const li = document.createElement('li');
+      li.textContent = `${displayName} x${it.qty} ($${it.price})`;
+      listEl.appendChild(li);
+    });
+
+    subEl.textContent = subtotal.toString();
+    voucherEl.textContent = voucher.toString();
+    finalEl.textContent = finalTotal.toString();
+
+    const section = document.getElementById('checkoutSection');
+    if(section){
+      section.classList.remove('hidden');
+      section.scrollIntoView({behavior:'smooth'});
+    }
+
+    fbTrack('InitiateCheckout',{value:finalTotal,currency:'USD'});
+    fbTrackCustom('CheckoutOpen',{subtotal,voucher,finalTotal});
+  }
+
+  // Category UI
+  function renderCategoryTabs(){
+    const container = document.getElementById('categoryTabs');
+    if(!container) return;
+    container.innerHTML = '';
+
+    CATEGORIES.forEach(cat=>{
+      const tab = document.createElement('button');
+      tab.type = 'button';
+      tab.className = 'category-tab' + (cat.id === currentCategory ? ' active':'');
+      tab.dataset.id = cat.id;
+      tab.innerHTML = `
+        <span class="category-tab-number">${cat.number}</span>
+        <span>${t(cat.labelKey)}</span>
+      `;
+      tab.addEventListener('click', ()=>{
+        currentCategory = cat.id;
+        try{
+          localStorage.setItem('nm_cat', currentCategory);
+        }catch(e){}
+        renderCategoryTabs();
+        renderProductsGrid();
+        fbTrackCustom('CategoryClick',{category:cat.id});
+      });
+      container.appendChild(tab);
+    });
+  }
+
+  function renderProductsGrid(){
+    const grid = document.getElementById('productsGrid');
+    if(!grid) return;
+    grid.innerHTML = '';
+
+    const products = getProductsForCategory(currentCategory);
+    products.forEach(p=>{
+      const displayName = currentLang === 'zh' ? p.nameZh : p.nameEn;
+      const card = document.createElement('div');
+      card.className = 'product';
+      card.innerHTML = `
+        <img src="${p.image}" alt="${p.alt}">
+        <div class="panel">
+          <div class="title">${displayName}</div>
+          <div class="price">$${p.price}</div>
+          <button class="btn add-to-cart" type="button" data-id="${p.id}">
+            ${t('btn.addToCart')}
+          </button>
+        </div>
+      `;
+      grid.appendChild(card);
+    });
+
+    grid.querySelectorAll('.add-to-cart').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const id = btn.dataset.id;
+        const p = findProductById(id);
+        if(!p) return;
+        if(!cart[id]){
+          cart[id] = {
+            nameEn:p.nameEn,
+            nameZh:p.nameZh,
+            price:p.price,
+            qty:0
+          };
+        }
+        cart[id].qty += 1;
+        renderCart();
+
+        fbTrack('AddToCart',{content_name:p.nameEn,value:p.price,currency:'USD'});
+        fbTrackCustom('AddToCartClick',{name:p.nameEn,price:p.price});
+      });
+    });
+
+    grid.querySelectorAll('.product img').forEach(img=>{
+      img.style.cursor = 'zoom-in';
+      img.addEventListener('click', ()=>{
+        openImageLightbox(img.src, img.alt);
+        fbTrackCustom('ImageZoom',{src: img.src});
+      });
+    });
+  }
+
+  // Modal helpers
+  function showModal(id){
+    const el=document.getElementById(id);
+    if(el) el.classList.remove('hidden');
+  }
+  function hideModal(id){
+    const el=document.getElementById(id);
+    if(el) el.classList.add('hidden');
+  }
+
+  // 圖片燈箱
+  function openImageLightbox(src, alt){
+    const overlay = document.getElementById('imageLightbox');
+    const img = document.getElementById('imageLightboxImg');
+    if(!overlay || !img) return;
+    img.src = src;
+    img.alt = alt || '';
+    overlay.classList.remove('hidden');
+  }
+
+  function closeImageLightbox(){
+    const overlay = document.getElementById('imageLightbox');
+    if(overlay){
+      overlay.classList.add('hidden');
+    }
+  }
+
+  let pendingOrderData = null;
+
+  async function actuallySubmitOrder(orderData){
+    const finalTotal = (orderData && orderData.totals && orderData.totals.finalTotal)
+      ? Number(orderData.totals.finalTotal) || 0
+      : 0;
+
+    const eventId = orderData && orderData.eventId ? orderData.eventId : generateEventId();
+    currentPurchaseEventId = eventId;
+
+    if(isSubmittingOrder) return;
+    isSubmittingOrder = true;
+
+    const submitBtn = document.querySelector('#checkoutForm button[type="submit"]');
+    const originalText = submitBtn ? submitBtn.textContent : '';
+    if(submitBtn){
+      submitBtn.disabled = true;
+      submitBtn.textContent = currentLang === 'zh' ? '提交中...' : 'Submitting...';
+    }
+
+    if(!ORDER_API_ENDPOINT){
+      console.log('=== Demo order (no backend configured) ===');
+      console.log(orderData);
+
+      if(typeof fbq === 'function'){
+        fbq('track','Purchase',
+            {value:finalTotal,currency:'USD'},
+            {eventID:eventId});
+        fbq('track','Lead',
+            {value:finalTotal,currency:'USD'},
+            {eventID:eventId});
+        fbq('trackCustom','OrderSubmitDemo',{finalTotal,eventId});
+      }
+
+      showModal('successModal');
+
+      if(submitBtn){
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
+      }
+      isSubmittingOrder = false;
+      return;
+    }
+
+    try{
+      const payload = Object.assign({}, orderData, { eventId });
+
+      await fetch(ORDER_API_ENDPOINT,{
+        method:'POST',
+        mode:'no-cors',
+        body: JSON.stringify(payload)
+      });
+
+      markVoucherUsedInBrowser();
+
+      if(typeof fbq === 'function'){
+        fbq('track','Purchase',
+            {value:finalTotal,currency:'USD'},
+            {eventID:eventId});
+        fbq('track','Lead',
+            {value:finalTotal,currency:'USD'},
+            {eventID:eventId});
+        fbq('trackCustom','OrderSubmit',{finalTotal,eventId});
+      }
+
       for(const k in cart){ delete cart[k]; }
       renderCart();
-    });
-  }
+      const form = document.getElementById('checkoutForm');
+      if(form) form.reset();
 
-  // Checkout 按鈕
-  const checkoutBtn = document.getElementById('checkoutBtn');
-  if(checkoutBtn){
-    checkoutBtn.addEventListener('click', openCheckout);
-  }
-
-  // 返回購物車
-  const backBtn = document.getElementById('backToCartBtn');
-  if(backBtn){
-    backBtn.addEventListener('click', ()=>{
-      const el = document.getElementById('featured');
-      if(el){ el.scrollIntoView({behavior:'smooth'}); }
-      fbTrackCustom('BackToCart',{});
-    });
-  }
-
-  // Hero 圖片放大
-  const heroImg = document.querySelector('.hero .card img');
-  if(heroImg){
-    heroImg.style.cursor = 'zoom-in';
-    heroImg.addEventListener('click', ()=>{
-      openImageLightbox(heroImg.src, heroImg.alt || '');
-      fbTrackCustom('HeroImageZoom',{src: heroImg.src});
-    });
-  }
-
-  // 表單送出（先開確認本人 Modal）
-  const form = document.getElementById('checkoutForm');
-  if(form){
-    form.addEventListener('submit',(event)=>{
-      event.preventDefault();
-
-      const { items, subtotal, voucher, finalTotal } = getCartTotals();
-      if(!items.length){
-        alert(t('alert.cartEmpty'));
-        return;
+      showModal('successModal');
+    }catch(err){
+      console.error('Order submit error:',err);
+      alert(t('alert.networkError'));
+    }finally{
+      if(submitBtn){
+        submitBtn.disabled = false;
+        submitBtn.textContent = originalText;
       }
-
-      const orderData = {
-        fullName: form.fullName.value.trim(),
-        phone:   form.phone.value.trim(),
-        email:   form.email.value.trim(),
-        address: form.address.value.trim(),
-        note:    form.note.value.trim(),
-        items,
-        totals:{ subtotal, voucher, finalTotal },
-        createdAt: new Date().toISOString()
-      };
-
-      const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-      const phoneDigits = orderData.phone.replace(/\D/g,'');
-
-      if(!emailReg.test(orderData.email)){
-        alert(currentLang === 'zh'
-          ? '请填写正确的电子邮箱格式。'
-          : 'Please enter a valid email address.'
-        );
-        return;
-      }
-      if(phoneDigits.length < 8){
-        alert(currentLang === 'zh'
-          ? '请填写正确的手机号码。'
-          : 'Please enter a valid mobile phone number.'
-        );
-        return;
-      }
-
-      if(!orderData.fullName || !orderData.phone || !orderData.address || !orderData.email){
-        alert(t('alert.missingFields'));
-        return;
-      }
-
-      const eventId = generateEventId();
-      orderData.eventId = eventId;
-
-      pendingOrderData = orderData;
-      showModal('confirmModal');
-    });
+      isSubmittingOrder = false;
+    }
   }
 
-  // 確認本人資訊 Modal
-  const editInfoBtn = document.getElementById('editInfoBtn');
-  if(editInfoBtn){
-    editInfoBtn.addEventListener('click', ()=>{
-      pendingOrderData = null;
-      hideModal('confirmModal');
-      fbTrackCustom('OrderEditInfo',{});
-    });
+  // 倒數時間格式
+  function formatRemaining(ms){
+    if(ms < 0) ms = 0;
+    const totalSec = Math.floor(ms / 1000);
+    const h = String(Math.floor(totalSec / 3600)).padStart(2,'0');
+    const m = String(Math.floor((totalSec % 3600) / 60)).padStart(2,'0');
+    const s = String(totalSec % 60).padStart(2,'0');
+    return `${h}:${m}:${s}`;
   }
 
-  const confirmInfoBtn = document.getElementById('confirmInfoBtn');
-  if(confirmInfoBtn){
-    confirmInfoBtn.addEventListener('click', async ()=>{
-      hideModal('confirmModal');
-      if(pendingOrderData){
-        const finalTotal = pendingOrderData.totals.finalTotal || 0;
-        const eventId = pendingOrderData.eventId || null;
-        fbTrackCustom('OrderConfirmInfo',{finalTotal,eventId});
-        await actuallySubmitOrder(pendingOrderData);
+  function updatePromoUI(){
+    const barTimer = document.getElementById('promoBarTimer');
+    const modalTimer = document.getElementById('promoModalTimer');
+    const bar = document.getElementById('promoBar');
+
+    if(!promoEndTime){
+      if(barTimer) barTimer.textContent = '00:00:00';
+      if(modalTimer) modalTimer.textContent = '00:00:00';
+      return;
+    }
+
+    const now = Date.now();
+    const diff = promoEndTime - now;
+    const active = diff > 0;
+
+    if(barTimer) barTimer.textContent = active ? formatRemaining(diff) : t('promo.expired');
+    if(modalTimer) modalTimer.textContent = active ? formatRemaining(diff) : '00:00:00';
+
+    if(bar){
+      if(active){
+        bar.classList.remove('promo-expired');
+      }else{
+        bar.classList.add('promo-expired');
+      }
+    }
+  }
+
+  function initPromoCountdown(){
+    try{
+      const savedEnd = localStorage.getItem('nm_promo_end');
+      if(savedEnd){
+        const t = parseInt(savedEnd,10);
+        if(!isNaN(t)) promoEndTime = t;
+      }
+    }catch(e){}
+
+    const now = Date.now();
+    if(!promoEndTime || promoEndTime <= now){
+      promoEndTime = now + 2 * 60 * 60 * 1000;
+      try{
+        localStorage.setItem('nm_promo_end', String(promoEndTime));
+      }catch(e){}
+    }
+
+    updatePromoUI();
+    setInterval(updatePromoUI, 1000);
+
+    if(isPromoActive()){
+      showModal('promoModal');  // 每次刷新顯示一次
+    }
+  }
+
+  // DOM ready
+  document.addEventListener('DOMContentLoaded', ()=>{
+    // 語言切換按鈕
+    document.querySelectorAll('.lang-btn').forEach(btn=>{
+      btn.addEventListener('click', ()=>{
+        const lang = btn.dataset.lang;
+        applyLanguage(lang);
+        fbTrackCustom('LangSwitch',{lang});
+      });
+    });
+
+    // 初始語言
+    let savedLang = 'en';
+    try{
+      const v = localStorage.getItem('nm_lang');
+      if(v === 'en' || v === 'zh') savedLang = v;
+    }catch(e){}
+
+    // 初始類別
+    try{
+      const savedCat = localStorage.getItem('nm_cat');
+      if(savedCat && PRODUCTS[savedCat]){
+        currentCategory = savedCat;
+      }else{
+        currentCategory = 'gaming';
+      }
+    }catch(e){
+      currentCategory = 'gaming';
+    }
+
+    renderCategoryTabs();
+    renderProductsGrid();
+    renderCart();
+    applyLanguage(savedLang);
+
+    setFooterYear();
+    updateOnline(); updateClaim();
+    setInterval(updateOnline, 10000);
+    setInterval(updateClaim, 20000);
+
+    // 清空購物車
+    const clearBtn = document.getElementById('clearCartBtn');
+    if(clearBtn){
+      clearBtn.addEventListener('click', ()=>{
+        const { items, subtotal } = getCartTotals();
+        fbTrackCustom('CartClear',{itemCount:items.length,subtotal});
+        for(const k in cart){ delete cart[k]; }
+        renderCart();
+      });
+    }
+
+    // Checkout 按鈕
+    const checkoutBtn = document.getElementById('checkoutBtn');
+    if(checkoutBtn){
+      checkoutBtn.addEventListener('click', openCheckout);
+    }
+
+    // 返回購物車
+    const backBtn = document.getElementById('backToCartBtn');
+    if(backBtn){
+      backBtn.addEventListener('click', ()=>{
+        const el = document.getElementById('featured');
+        if(el){ el.scrollIntoView({behavior:'smooth'}); }
+        fbTrackCustom('BackToCart',{});
+      });
+    }
+
+    // Hero 圖片放大
+    const heroImg = document.querySelector('.hero .card img');
+    if(heroImg){
+      heroImg.style.cursor = 'zoom-in';
+      heroImg.addEventListener('click', ()=>{
+        openImageLightbox(heroImg.src, heroImg.alt || '');
+        fbTrackCustom('HeroImageZoom',{src: heroImg.src});
+      });
+    }
+
+    // 表單送出
+    const form = document.getElementById('checkoutForm');
+    if(form){
+      form.addEventListener('submit',(event)=>{
+        event.preventDefault();
+
+        const { items, subtotal, voucher, finalTotal } = getCartTotals();
+        if(!items.length){
+          alert(t('alert.cartEmpty'));
+          return;
+        }
+
+        const orderData = {
+          fullName: form.fullName.value.trim(),
+          phone:   form.phone.value.trim(),
+          email:   form.email.value.trim(),
+          address: form.address.value.trim(),
+          note:    form.note.value.trim(),
+          items,
+          totals:{ subtotal, voucher, finalTotal },
+          createdAt: new Date().toISOString()
+        };
+
+        const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        const phoneDigits = orderData.phone.replace(/\D/g,'');
+
+        if(!emailReg.test(orderData.email)){
+          alert(currentLang === 'zh'
+            ? '请填写正确的电子邮箱格式。'
+            : 'Please enter a valid email address.'
+          );
+          return;
+        }
+        if(phoneDigits.length < 8){
+          alert(currentLang === 'zh'
+            ? '请填写正确的手机号码。'
+            : 'Please enter a valid mobile phone number.'
+          );
+          return;
+        }
+
+        if(!orderData.fullName || !orderData.phone || !orderData.address || !orderData.email){
+          alert(t('alert.missingFields'));
+          return;
+        }
+
+        const eventId = generateEventId();
+        orderData.eventId = eventId;
+
+        pendingOrderData = orderData;
+        showModal('confirmModal');
+      });
+    }
+
+    // 確認本人資訊 Modal
+    const editInfoBtn = document.getElementById('editInfoBtn');
+    if(editInfoBtn){
+      editInfoBtn.addEventListener('click', ()=>{
         pendingOrderData = null;
-      }
-    });
-  }
+        hideModal('confirmModal');
+        fbTrackCustom('OrderEditInfo',{});
+      });
+    }
 
-  // 成功 Modal
-  const successOkBtn = document.getElementById('successOkBtn');
-  if(successOkBtn){
-    successOkBtn.addEventListener('click', ()=>{
-      hideModal('successModal');
-      fbTrackCustom('OrderSuccessModalClose',{});
-    });
-  }
+    const confirmInfoBtn = document.getElementById('confirmInfoBtn');
+    if(confirmInfoBtn){
+      confirmInfoBtn.addEventListener('click', async ()=>{
+        hideModal('confirmModal');
+        if(pendingOrderData){
+          const finalTotal = pendingOrderData.totals.finalTotal || 0;
+          const eventId = pendingOrderData.eventId || null;
+          fbTrackCustom('OrderConfirmInfo',{finalTotal,eventId});
+          await actuallySubmitOrder(pendingOrderData);
+          pendingOrderData = null;
+        }
+      });
+    }
 
-  // 圖片燈箱關閉
-  const imageLightbox = document.getElementById('imageLightbox');
-  const imageLightboxClose = document.getElementById('imageLightboxClose');
+    // 成功 Modal
+    const successOkBtn = document.getElementById('successOkBtn');
+    if(successOkBtn){
+      successOkBtn.addEventListener('click', ()=>{
+        hideModal('successModal');
+        fbTrackCustom('OrderSuccessModalClose',{});
+      });
+    }
 
-  if(imageLightbox){
-    imageLightbox.addEventListener('click', (e)=>{
-      if(e.target === imageLightbox){
+    // 圖片燈箱關閉
+    const imageLightbox = document.getElementById('imageLightbox');
+    const imageLightboxClose = document.getElementById('imageLightboxClose');
+
+    if(imageLightbox){
+      imageLightbox.addEventListener('click', (e)=>{
+        if(e.target === imageLightbox){
+          closeImageLightbox();
+        }
+      });
+    }
+    if(imageLightboxClose){
+      imageLightboxClose.addEventListener('click', ()=>{
         closeImageLightbox();
-      }
-    });
-  }
-  if(imageLightboxClose){
-    imageLightboxClose.addEventListener('click', ()=>{
-      closeImageLightbox();
-    });
-  }
+      });
+    }
 
-  // ViewContentTimed 停留 30 秒
-  setTimeout(()=>{
-    fbTrackCustom('ViewContentTimed', { seconds: 30 });
-  }, 30000);
-});
-</script>
+    // 優惠倒數 & 彈窗
+    initPromoCountdown();
 
+    // 優惠彈窗按鈕
+    const promoModalConfirm = document.getElementById('promoModalConfirm');
+    if(promoModalConfirm){
+      promoModalConfirm.addEventListener('click', ()=>{
+        hideModal('promoModal');
+        fbTrackCustom('PromoModalConfirm',{});
+      });
+    }
 
-  <!-- Facebook Pixel（新版 ID） -->
+    // 懸浮購物車按鈕
+    const floatingCartBtn = document.getElementById('floatingCartBtn');
+    if(floatingCartBtn){
+      floatingCartBtn.addEventListener('click', ()=>{
+        const cartSection = document.querySelector('.cart');
+        if(cartSection){
+          cartSection.scrollIntoView({behavior:'smooth', block:'center'});
+          cartSection.classList.add('cart-highlight');
+          setTimeout(()=>cartSection.classList.remove('cart-highlight'), 1000);
+        }
+      });
+
+      // 拖曳
+      let dragging = false;
+      let startX=0, startY=0, startLeft=0, startTop=0;
+
+      floatingCartBtn.addEventListener('mousedown', (e)=>{
+        dragging = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        const rect = floatingCartBtn.getBoundingClientRect();
+        startLeft = rect.left;
+        startTop = rect.top;
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', (e)=>{
+        if(!dragging) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        const newLeft = startLeft + dx;
+        const newTop = startTop + dy;
+        floatingCartBtn.style.left = newLeft + 'px';
+        floatingCartBtn.style.top = newTop + 'px';
+        floatingCartBtn.style.right = 'auto';
+        floatingCartBtn.style.bottom = 'auto';
+      });
+
+      document.addEventListener('mouseup', ()=>{
+        dragging = false;
+      });
+    }
+
+    // ViewContentTimed 停留 30 秒
+    setTimeout(()=>{
+      fbTrackCustom('ViewContentTimed', { seconds: 30 });
+    }, 30000);
+  });
+  </script>
+
+  <!-- Facebook Pixel -->
   <script>
   !(function(f,b,e,v,n,t,s)
   {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -848,6 +1010,34 @@ document.addEventListener('DOMContentLoaded', ()=>{
     }
     .ribbon-main{font-size:14px;}
     .ribbon-sub{font-size:12px;opacity:.95;margin-top:2px;display:block;}
+
+    /* 優惠倒數橫條 */
+    .promo-bar{
+      margin-top:10px;
+      background:linear-gradient(90deg,rgba(255,255,255,.05),rgba(255,255,255,.02));
+      border:1px solid rgba(255,255,255,.18);
+      border-radius:999px;
+      padding:8px 18px;
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      font-size:13px;
+      color:#fef3c7;
+    }
+    .promo-bar-label{
+      margin-right:10px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+    .promo-bar-timer{
+      font-family:ui-monospace,Menlo,Monaco,"SF Mono",Consolas,monospace;
+      font-weight:700;
+      letter-spacing:1px;
+    }
+    .promo-bar.promo-expired{
+      opacity:.7;
+    }
 
     .hero{
       display:grid;
@@ -986,6 +1176,10 @@ document.addEventListener('DOMContentLoaded', ()=>{
       padding:14px;
       position:sticky;
       top:16px;
+      transition:box-shadow .25s ease;
+    }
+    .cart.cart-highlight{
+      box-shadow:0 0 0 2px #ffe7a3, 0 0 18px rgba(255,231,163,.7);
     }
     .cart h3{margin:0 0 8px;font-size:16px;}
     .cart-items{
@@ -1163,6 +1357,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
       border:1px solid var(--border);
     }
 
+    /* 優惠彈窗 timer 字體 */
+    #promoModalTimer{
+      font-family:ui-monospace,Menlo,Monaco,"SF Mono",Consolas,monospace;
+      font-weight:700;
+    }
+
     /* 圖片燈箱 */
     .image-lightbox-card{
       position:relative;
@@ -1173,13 +1373,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
       border:none;
       box-shadow:none;
     }
-
     .image-lightbox-card img{
       max-width:96vw;
       max-height:90vh;
       border-radius:16px;
     }
-
     .image-lightbox-close{
       position:absolute;
       top:10px;
@@ -1195,6 +1393,42 @@ document.addEventListener('DOMContentLoaded', ()=>{
       display:flex;
       align-items:center;
       justify-content:center;
+    }
+
+    /* 懸浮購物車按鈕 */
+    .floating-cart-btn{
+      position:fixed;
+      right:24px;
+      bottom:20%;
+      width:64px;
+      height:64px;
+      border-radius:50%;
+      border:none;
+      background:linear-gradient(145deg,#f4c95d,#f6ae2d);
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      cursor:pointer;
+      box-shadow:0 10px 25px rgba(0,0,0,.35);
+      z-index:900;
+    }
+    .floating-cart-btn .cart-icon{
+      font-size:26px;
+    }
+    .floating-cart-btn .cart-count{
+      position:absolute;
+      top:-6px;
+      right:-6px;
+      min-width:22px;
+      height:22px;
+      border-radius:999px;
+      background:#e11d48;
+      color:#fff;
+      font-size:12px;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      font-weight:700;
     }
 
     @media (max-width: 980px){
@@ -1250,6 +1484,12 @@ document.addEventListener('DOMContentLoaded', ()=>{
         <div data-i18n="ribbon.claimed"></div>
       </div>
     </section>
+
+    <!-- 優惠倒數條 -->
+    <div id="promoBar" class="promo-bar">
+      <div class="promo-bar-label" data-i18n="promo.bar.label"></div>
+      <div class="promo-bar-timer promo-bar-timer" id="promoBarTimer">02:00:00</div>
+    </div>
 
     <!-- Hero -->
     <section class="hero">
@@ -1363,6 +1603,23 @@ document.addEventListener('DOMContentLoaded', ()=>{
     </footer>
   </div>
 
+  <!-- 優惠提醒 Modal -->
+  <div id="promoModal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-title" data-i18n="promo.modal.title"></div>
+      <div class="modal-body">
+        <p data-i18n="promo.modal.body"></p>
+        <p style="margin-top:8px;font-size:13px;opacity:.9;">
+          <span data-i18n="promo.modal.timerPrefix"></span>：
+          <strong id="promoModalTimer">02:00:00</strong>
+        </p>
+      </div>
+      <div class="modal-actions">
+        <button type="button" id="promoModalConfirm" class="modal-btn primary" data-i18n="promo.modal.confirm"></button>
+      </div>
+    </div>
+  </div>
+
   <!-- 確認本人資訊 Modal -->
   <div id="confirmModal" class="modal-overlay hidden">
     <div class="modal-card">
@@ -1393,5 +1650,11 @@ document.addEventListener('DOMContentLoaded', ()=>{
       <img id="imageLightboxImg" src="" alt="">
     </div>
   </div>
+
+  <!-- 懸浮購物車按鈕 -->
+  <button id="floatingCartBtn" class="floating-cart-btn" type="button">
+    <span class="cart-icon">🛒</span>
+    <span class="cart-count" id="floatingCartCount">0</span>
+  </button>
 </body>
 </html>
