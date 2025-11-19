@@ -189,6 +189,24 @@ function getCookie(name){
   return '';
 }
 
+function getFBC(){
+  try{
+    const url = new URL(window.location.href);
+    const fbclid = url.searchParams.get("fbclid");
+    if(fbclid){
+      const ts = Math.floor(Date.now() / 1000);
+      const fbc = `fb.1.${ts}.${fbclid}`;
+      // 寫入 _fbc cookie，讓下次重整也能沿用
+      document.cookie = `_fbc=${fbc}; path=/; max-age=63072000`;
+      return fbc;
+    }
+  }catch(e){}
+
+  const fromCookie = getCookie("_fbc");
+  return fromCookie || "";
+}
+
+
   function t(key){
     return (I18N[currentLang] && I18N[currentLang][key]) ||
            (I18N.en && I18N.en[key]) || key;
@@ -574,13 +592,13 @@ function getCookie(name){
 // === CAPI：將後端事件送到 Cloudflare Worker ===
 try {
   const fbp = getCookie("_fbp") || "";
-  const fbc = getCookie("_fbc") || "";
+  const fbc = getFBC() || "";
 
   const capiBody = {
-    // 與前端 OrderSubmit 保持同一個事件名稱，方便你在 Events Manager 對照
+    // 與前端 OrderSubmit 保持同一個事件名稱，方便在 Events Manager 對照
     event_name: "OrderSubmit",
     event_time: Math.floor(Date.now() / 1000),
-    // 和前端 fbq 保持同一個 eventId，方便 Browser + Server 去重
+    // 與 fbq 的 eventID 共用同一個值，讓瀏覽器與伺服器事件可以去重
     event_id: eventId,
     action_source: "website",
     user_data: {
@@ -591,11 +609,9 @@ try {
     custom_data: {
       currency: "USD",
       value: finalTotal
-    },
-
-    // 測試時可以填入 FB Events Manager 的 test_event_code，看 Test Events 裡的 Server 事件
-    // 測完可以把這行刪掉或註解掉
-    test_event_code: "TEST19683"
+    }
+    // 如需在 Test Events 測試，可額外加入 test_event_code，例如：
+    // ,test_event_code: "TEST19683"
   };
 
   fetch(CAPI_ENDPOINT, {
@@ -606,7 +622,6 @@ try {
 } catch(e){
   console.error("CAPI 發送失敗", e);
 }
-
 
 
       markVoucherUsedInBrowser();
