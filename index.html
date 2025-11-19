@@ -577,18 +577,20 @@ try {
   const fbc = getCookie("_fbc") || "";
 
   const capiBody = {
-    event_name: "OrderSubmit",
+    // 使用標準 Purchase 事件名稱
+    event_name: "Purchase",
     event_time: Math.floor(Date.now() / 1000),
-    event_id: generateEventId(),
+    // 和前端 fbq 保持同一個 eventId，方便 Browser + Server 去重
+    event_id: eventId,
     action_source: "website",
     user_data: {
       client_user_agent: navigator.userAgent,
-      fbp: fbp,
-      fbc: fbc
+      fbp: fbp || undefined,
+      fbc: fbc || undefined
     },
     custom_data: {
       currency: "USD",
-      value: payload?.totals?.finalTotal || 0
+      value: finalTotal
     }
   };
 
@@ -600,6 +602,7 @@ try {
 } catch(e){
   console.error("CAPI 發送失敗", e);
 }
+
 
       markVoucherUsedInBrowser();
 
@@ -669,6 +672,7 @@ try {
   }
 
   function initPromoCountdown(){
+    // 第一次進站：建立 2 小時倒數；之後即使時間到，也不會重新給新的 2 小時
     try{
       const savedEnd = localStorage.getItem('nm_promo_end');
       if(savedEnd){
@@ -677,8 +681,9 @@ try {
       }
     }catch(e){}
 
-    const now = Date.now();
-    if(!promoEndTime || promoEndTime <= now){
+    // 只有在沒有任何已儲存的結束時間時，才建立新的 2 小時優惠
+    if(!promoEndTime){
+      const now = Date.now();
       promoEndTime = now + 2 * 60 * 60 * 1000;
       try{
         localStorage.setItem('nm_promo_end', String(promoEndTime));
@@ -688,6 +693,7 @@ try {
     updatePromoUI();
     setInterval(updatePromoUI, 1000);
 
+    // 只有還在有效時間內才彈出提示窗
     if(isPromoActive()){
       showModal('promoModal');  // 每次刷新顯示一次
     }
