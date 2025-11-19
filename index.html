@@ -57,6 +57,8 @@
       'checkout.note': 'The voucher is applied automatically if the offer is still active. You enjoy <strong>use now, pay later</strong> with a 7-day trial period — if you\'re not satisfied, we can help with returns.',
 
       'form.fullNameLabel': 'Full Name / Name (must be the buyer)',
+      'form.firstNameLabel': 'First Name',
+      'form.lastNameLabel': 'Last Name',
       'form.emailLabel': 'Email Address',
       'form.phoneLabel': 'Mobile Phone',
       'form.addressLabel': 'Delivery Address',
@@ -126,6 +128,8 @@
       'checkout.note': '在优惠有效期间，系统会自动套用优惠券。您享有<strong>先使用后付款</strong>与<strong>7 天试用期</strong>，如不满意我们可协助退货。',
 
       'form.fullNameLabel': 'Full Name / 姓名（须为购买人本人）',
+      'form.firstNameLabel': '名（First Name）',
+      'form.lastNameLabel': '姓（Last Name）',
       'form.emailLabel': 'Email Address / 电子邮箱',
       'form.phoneLabel': 'Mobile Phone / 手机号码',
       'form.addressLabel': 'Delivery Address / 收货地址',
@@ -188,24 +192,6 @@ function getCookie(name){
   if(parts.length === 2) return parts.pop().split(';').shift();
   return '';
 }
-
-function getFBC(){
-  try{
-    const url = new URL(window.location.href);
-    const fbclid = url.searchParams.get("fbclid");
-    if(fbclid){
-      const ts = Math.floor(Date.now() / 1000);
-      const fbc = `fb.1.${ts}.${fbclid}`;
-      // 寫入 _fbc cookie，讓下次重整也能沿用
-      document.cookie = `_fbc=${fbc}; path=/; max-age=63072000`;
-      return fbc;
-    }
-  }catch(e){}
-
-  const fromCookie = getCookie("_fbc");
-  return fromCookie || "";
-}
-
 
   function t(key){
     return (I18N[currentLang] && I18N[currentLang][key]) ||
@@ -592,26 +578,22 @@ function getFBC(){
 // === CAPI：將後端事件送到 Cloudflare Worker ===
 try {
   const fbp = getCookie("_fbp") || "";
-  const fbc = getFBC() || "";
+  const fbc = getCookie("_fbc") || "";
 
   const capiBody = {
-    // 與前端 OrderSubmit 保持同一個事件名稱，方便在 Events Manager 對照
     event_name: "OrderSubmit",
     event_time: Math.floor(Date.now() / 1000),
-    // 與 fbq 的 eventID 共用同一個值，讓瀏覽器與伺服器事件可以去重
-    event_id: eventId,
+    event_id: generateEventId(),
     action_source: "website",
     user_data: {
       client_user_agent: navigator.userAgent,
-      fbp: fbp || undefined,
-      fbc: fbc || undefined
+      fbp: fbp,
+      fbc: fbc
     },
     custom_data: {
       currency: "USD",
-      value: finalTotal
+      value: payload?.totals?.finalTotal || 0
     }
-    // 如需在 Test Events 測試，可額外加入 test_event_code，例如：
-    // ,test_event_code: "TEST19683"
   };
 
   fetch(CAPI_ENDPOINT, {
@@ -622,7 +604,6 @@ try {
 } catch(e){
   console.error("CAPI 發送失敗", e);
 }
-
 
       markVoucherUsedInBrowser();
 
@@ -692,7 +673,6 @@ try {
   }
 
   function initPromoCountdown(){
-    // 第一次進站：建立 2 小時倒數；之後即使時間到，也不會重新給新的 2 小時
     try{
       const savedEnd = localStorage.getItem('nm_promo_end');
       if(savedEnd){
@@ -701,9 +681,8 @@ try {
       }
     }catch(e){}
 
-    // 只有在沒有任何已儲存的結束時間時，才建立新的 2 小時優惠
-    if(!promoEndTime){
-      const now = Date.now();
+    const now = Date.now();
+    if(!promoEndTime || promoEndTime <= now){
       promoEndTime = now + 2 * 60 * 60 * 1000;
       try{
         localStorage.setItem('nm_promo_end', String(promoEndTime));
@@ -713,7 +692,6 @@ try {
     updatePromoUI();
     setInterval(updatePromoUI, 1000);
 
-    // 只有還在有效時間內才彈出提示窗
     if(isPromoActive()){
       showModal('promoModal');  // 每次刷新顯示一次
     }
@@ -809,7 +787,9 @@ try {
         }
 
         const orderData = {
-          fullName: form.fullName.value.trim(),
+          firstName: form.firstName.value.trim(),
+          lastName:  form.lastName.value.trim(),
+          fullName:  (form.firstName.value.trim() + ' ' + form.lastName.value.trim()).trim(),
           phone:   form.phone.value.trim(),
           email:   form.email.value.trim(),
           address: form.address.value.trim(),
@@ -1624,9 +1604,14 @@ try {
         <form id="checkoutForm">
           <div class="checkout-form-grid">
             <div class="checkout-field">
-              <label for="fullName" data-i18n="form.fullNameLabel"></label>
-              <input id="fullName" name="fullName" type="text" required
-                     data-i18n-placeholder="ph.fullName">
+              <label for="firstName" data-i18n="form.firstNameLabel"></label>
+              <input id="firstName" name="firstName" type="text" required
+                     data-i18n-placeholder="ph.firstName">
+            </div>
+            <div class="checkout-field">
+              <label for="lastName" data-i18n="form.lastNameLabel"></label>
+              <input id="lastName" name="lastName" type="text" required
+                     data-i18n-placeholder="ph.lastName">
             </div>
             <div class="checkout-field">
               <label for="email" data-i18n="form.emailLabel"></label>
