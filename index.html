@@ -577,8 +577,8 @@ try {
   const fbc = getCookie("_fbc") || "";
 
   const capiBody = {
-    // 使用標準 Purchase 事件名稱
-    event_name: "Purchase",
+    // 與前端 OrderSubmit 保持同一個事件名稱，方便你在 Events Manager 對照
+    event_name: "OrderSubmit",
     event_time: Math.floor(Date.now() / 1000),
     // 和前端 fbq 保持同一個 eventId，方便 Browser + Server 去重
     event_id: eventId,
@@ -591,7 +591,11 @@ try {
     custom_data: {
       currency: "USD",
       value: finalTotal
-    }
+    },
+
+    // 測試時可以填入 FB Events Manager 的 test_event_code，看 Test Events 裡的 Server 事件
+    // 測完可以把這行刪掉或註解掉
+    // test_event_code: "PASTE_YOUR_TEST_CODE_HERE"
   };
 
   fetch(CAPI_ENDPOINT, {
@@ -602,6 +606,7 @@ try {
 } catch(e){
   console.error("CAPI 發送失敗", e);
 }
+
 
 
       markVoucherUsedInBrowser();
