@@ -57,8 +57,6 @@
       'checkout.note': 'The voucher is applied automatically if the offer is still active. You enjoy <strong>use now, pay later</strong> with a 7-day trial period — if you\'re not satisfied, we can help with returns.',
 
       'form.fullNameLabel': 'Full Name / Name (must be the buyer)',
-      'form.firstNameLabel': 'First Name',
-      'form.lastNameLabel': 'Last Name',
       'form.emailLabel': 'Email Address',
       'form.phoneLabel': 'Mobile Phone',
       'form.addressLabel': 'Delivery Address',
@@ -68,6 +66,8 @@
       'form.back': 'Back to Cart',
 
       'ph.fullName': 'Please enter your full name',
+      'ph.firstName': 'First Name',
+      'ph.lastName': 'Last Name',
       'ph.email': 'example@email.com',
       'ph.phone': 'e.g. +1 555 123 4567',
       'ph.address': 'Street, city, state, ZIP',
@@ -128,8 +128,6 @@
       'checkout.note': '在优惠有效期间，系统会自动套用优惠券。您享有<strong>先使用后付款</strong>与<strong>7 天试用期</strong>，如不满意我们可协助退货。',
 
       'form.fullNameLabel': 'Full Name / 姓名（须为购买人本人）',
-      'form.firstNameLabel': '名（First Name）',
-      'form.lastNameLabel': '姓（Last Name）',
       'form.emailLabel': 'Email Address / 电子邮箱',
       'form.phoneLabel': 'Mobile Phone / 手机号码',
       'form.addressLabel': 'Delivery Address / 收货地址',
@@ -139,6 +137,8 @@
       'form.back': '返回购物车',
 
       'ph.fullName': '请填写您的姓名',
+      'ph.firstName': '名（与证件相同）',
+      'ph.lastName': '姓（与证件相同）',
       'ph.email': '请输入常用电子邮箱',
       'ph.phone': '请填写本人手机号码',
       'ph.address': '详细收货地址（街道／城市／州／邮编）',
@@ -583,17 +583,20 @@ try {
   const capiBody = {
     event_name: "OrderSubmit",
     event_time: Math.floor(Date.now() / 1000),
-    event_id: generateEventId(),
+    // 與前端 fbq 使用的 eventId 共用同一個值，方便 Browser + Server 去重
+    event_id: eventId,
     action_source: "website",
     user_data: {
       client_user_agent: navigator.userAgent,
-      fbp: fbp,
-      fbc: fbc
+      fbp: fbp || undefined,
+      fbc: fbc || undefined
     },
     custom_data: {
       currency: "USD",
       value: payload?.totals?.finalTotal || 0
     }
+    // 如需在 Test Events 測試，可加上 test_event_code，例如：
+    // ,test_event_code: "TEST19683"
   };
 
   fetch(CAPI_ENDPOINT, {
@@ -673,6 +676,7 @@ try {
   }
 
   function initPromoCountdown(){
+    // 第一次進站：建立 2 小時倒數；之後即使時間到，也不會重新給新的 2 小時
     try{
       const savedEnd = localStorage.getItem('nm_promo_end');
       if(savedEnd){
@@ -681,8 +685,9 @@ try {
       }
     }catch(e){}
 
-    const now = Date.now();
-    if(!promoEndTime || promoEndTime <= now){
+    // 只有在沒有任何已儲存的結束時間時，才建立新的 2 小時優惠
+    if(!promoEndTime){
+      const now = Date.now();
       promoEndTime = now + 2 * 60 * 60 * 1000;
       try{
         localStorage.setItem('nm_promo_end', String(promoEndTime));
@@ -692,6 +697,7 @@ try {
     updatePromoUI();
     setInterval(updatePromoUI, 1000);
 
+    // 只有還在有效時間內才彈出提示窗
     if(isPromoActive()){
       showModal('promoModal');  // 每次刷新顯示一次
     }
@@ -787,9 +793,7 @@ try {
         }
 
         const orderData = {
-          firstName: form.firstName.value.trim(),
-          lastName:  form.lastName.value.trim(),
-          fullName:  (form.firstName.value.trim() + ' ' + form.lastName.value.trim()).trim(),
+          fullName: form.fullName.value.trim(),
           phone:   form.phone.value.trim(),
           email:   form.email.value.trim(),
           address: form.address.value.trim(),
@@ -1604,14 +1608,9 @@ try {
         <form id="checkoutForm">
           <div class="checkout-form-grid">
             <div class="checkout-field">
-              <label for="firstName" data-i18n="form.firstNameLabel"></label>
-              <input id="firstName" name="firstName" type="text" required
-                     data-i18n-placeholder="ph.firstName">
-            </div>
-            <div class="checkout-field">
-              <label for="lastName" data-i18n="form.lastNameLabel"></label>
-              <input id="lastName" name="lastName" type="text" required
-                     data-i18n-placeholder="ph.lastName">
+              <label for="fullName" data-i18n="form.fullNameLabel"></label>
+              <input id="fullName" name="fullName" type="text" required
+                     data-i18n-placeholder="ph.fullName">
             </div>
             <div class="checkout-field">
               <label for="email" data-i18n="form.emailLabel"></label>
