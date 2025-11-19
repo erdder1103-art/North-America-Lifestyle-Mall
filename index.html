@@ -10,6 +10,7 @@
   <script>
     const FB_PIXEL_ID = "1879609856327374";
     const ORDER_API_ENDPOINT = "https://script.google.com/macros/s/AKfycbzkEQpk9t5v8fZoqwYR3hM8CESuECYQuM6CBqrk6UdmwiN_IdochhO51hec3eRBszLFtA/exec";
+    const CAPI_ENDPOINT = "https://throbbing-grass-6e58.skype138388.workers.dev/";
   </script>
 
   <!-- 主邏輯（語系、商品、購物車、送單 + eventId + 倒數 + 懸浮購物車） -->
@@ -168,16 +169,25 @@
     return 'ev_' + Date.now().toString(36) + '_' + Math.random().toString(36).substring(2,10);
   }
 
-  function fbTrack(eventName, params){
-    if(typeof fbq === 'function'){
-      fbq('track', eventName, params || {});
-    }
+  // 小工具：安全呼叫 fbq
+function fbTrack(eventName, params){
+  if(typeof fbq === 'function'){
+    fbq('track', eventName, params || {});
   }
-  function fbTrackCustom(eventName, params){
-    if(typeof fbq === 'function'){
-      fbq('trackCustom', eventName, params || {});
-    }
+}
+function fbTrackCustom(eventName, params){
+  if(typeof fbq === 'function'){
+    fbq('trackCustom', eventName, params || {});
   }
+}
+
+// 🔹 在這裡加「讀取 FB Cookie」的小工具
+function getCookie(name){
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if(parts.length === 2) return parts.pop().split(';').shift();
+  return '';
+}
 
   function t(key){
     return (I18N[currentLang] && I18N[currentLang][key]) ||
@@ -561,6 +571,35 @@
         mode:'no-cors',
         body: JSON.stringify(payload)
       });
+// === CAPI：將後端事件送到 Cloudflare Worker ===
+try {
+  const fbp = getCookie("_fbp") || "";
+  const fbc = getCookie("_fbc") || "";
+
+  const capiBody = {
+    event_name: "OrderSubmit",
+    event_time: Math.floor(Date.now() / 1000),
+    event_id: generateEventId(),
+    action_source: "website",
+    user_data: {
+      client_user_agent: navigator.userAgent,
+      fbp: fbp,
+      fbc: fbc
+    },
+    custom_data: {
+      currency: "USD",
+      value: payload?.totals?.finalTotal || 0
+    }
+  };
+
+  fetch(CAPI_ENDPOINT, {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify(capiBody)
+  });
+} catch(e){
+  console.error("CAPI 發送失敗", e);
+}
 
       markVoucherUsedInBrowser();
 
