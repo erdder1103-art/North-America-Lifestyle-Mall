@@ -788,15 +788,21 @@ try {
         }
 
         const orderData = {
-          fullName: form.fullName.value.trim(),
-          phone:   form.phone.value.trim(),
-          email:   form.email.value.trim(),
-          address: form.address.value.trim(),
-          note:    form.note.value.trim(),
-          items,
-          totals:{ subtotal, voucher, finalTotal },
-          createdAt: new Date().toISOString()
-        };
+  // ⬇⬇⬇ 新增：名 / 姓 分開收
+  firstName: form.firstName.value.trim(),
+  lastName:  form.lastName.value.trim(),
+  // 這一欄方便你在後台或 CAPI 需要「全名」時用
+  fullName:  (form.firstName.value.trim() + ' ' + form.lastName.value.trim()).trim(),
+
+  phone:   form.phone.value.trim(),
+  email:   form.email.value.trim(),
+  address: form.address.value.trim(),
+  note:    form.note.value.trim(),
+  items,
+  totals:{ subtotal, voucher, finalTotal },
+  createdAt: new Date().toISOString()
+};
+
 
         const emailReg = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         const phoneDigits = orderData.phone.replace(/\D/g,'');
