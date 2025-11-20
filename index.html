@@ -595,8 +595,6 @@ try {
       currency: "USD",
       value: payload?.totals?.finalTotal || 0
     }
-    // 如需在 Test Events 測試，可加上 test_event_code，例如：
-    // ,test_event_code: "TEST19683"
   };
 
   fetch(CAPI_ENDPOINT, {
@@ -676,7 +674,6 @@ try {
   }
 
   function initPromoCountdown(){
-    // 第一次進站：建立 2 小時倒數；之後即使時間到，也不會重新給新的 2 小時
     try{
       const savedEnd = localStorage.getItem('nm_promo_end');
       if(savedEnd){
@@ -685,9 +682,8 @@ try {
       }
     }catch(e){}
 
-    // 只有在沒有任何已儲存的結束時間時，才建立新的 2 小時優惠
-    if(!promoEndTime){
-      const now = Date.now();
+    const now = Date.now();
+    if(!promoEndTime || promoEndTime <= now){
       promoEndTime = now + 2 * 60 * 60 * 1000;
       try{
         localStorage.setItem('nm_promo_end', String(promoEndTime));
@@ -697,7 +693,6 @@ try {
     updatePromoUI();
     setInterval(updatePromoUI, 1000);
 
-    // 只有還在有效時間內才彈出提示窗
     if(isPromoActive()){
       showModal('promoModal');  // 每次刷新顯示一次
     }
@@ -1606,40 +1601,57 @@ try {
 
         <!-- Form -->
         <form id="checkoutForm">
-          <div class="checkout-form-grid">
-            <div class="checkout-field">
-              <label for="fullName" data-i18n="form.fullNameLabel"></label>
-              <input id="fullName" name="fullName" type="text" required
-                     data-i18n-placeholder="ph.fullName">
-            </div>
-            <div class="checkout-field">
-              <label for="email" data-i18n="form.emailLabel"></label>
-              <input id="email" name="email" type="email" required
-                     data-i18n-placeholder="ph.email">
-            </div>
-            <div class="checkout-field">
-              <label for="phone" data-i18n="form.phoneLabel"></label>
-              <input id="phone" name="phone" type="tel" required
-                     data-i18n-placeholder="ph.phone">
-            </div>
-            <div class="checkout-field checkout-field-full">
-              <label for="address" data-i18n="form.addressLabel"></label>
-              <input id="address" name="address" type="text" required
-                     data-i18n-placeholder="ph.address">
-            </div>
-            <div class="checkout-field checkout-field-full">
-              <label for="note" data-i18n="form.noteLabel"></label>
-              <textarea id="note" name="note" data-i18n-placeholder="ph.note"></textarea>
-            </div>
-          </div>
+  <div class="checkout-form-grid">
+    <!-- 名 -->
+    <div class="checkout-field">
+      <label for="firstName" data-i18n="form.firstNameLabel"></label>
+      <input id="firstName" name="firstName" type="text" required
+             data-i18n-placeholder="ph.firstName">
+    </div>
 
-          <p class="checkout-note" data-i18n="form.noteBlock"></p>
+    <!-- 姓 -->
+    <div class="checkout-field">
+      <label for="lastName" data-i18n="form.lastNameLabel"></label>
+      <input id="lastName" name="lastName" type="text" required
+             data-i18n-placeholder="ph.lastName">
+    </div>
 
-          <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
-            <button class="btn" type="submit" data-i18n="form.submit"></button>
-            <button class="btn btn-outline" type="button" id="backToCartBtn" data-i18n="form.back"></button>
-          </div>
-        </form>
+    <!-- Email -->
+    <div class="checkout-field">
+      <label for="email" data-i18n="form.emailLabel"></label>
+      <input id="email" name="email" type="email" required
+             data-i18n-placeholder="ph.email">
+    </div>
+
+    <!-- 手機 -->
+    <div class="checkout-field">
+      <label for="phone" data-i18n="form.phoneLabel"></label>
+      <input id="phone" name="phone" type="tel" required
+             data-i18n-placeholder="ph.phone">
+    </div>
+
+    <!-- 地址 -->
+    <div class="checkout-field checkout-field-full">
+      <label for="address" data-i18n="form.addressLabel"></label>
+      <input id="address" name="address" type="text"
+             data-i18n-placeholder="ph.address">
+    </div>
+
+    <!-- 備註 -->
+    <div class="checkout-field checkout-field-full">
+      <label for="note" data-i18n="form.noteLabel"></label>
+      <textarea id="note" name="note" data-i18n-placeholder="ph.note"></textarea>
+    </div>
+  </div>
+
+  <p class="checkout-note" data-i18n="form.noteBlock"></p>
+
+  <div style="margin-top:12px;display:flex;gap:10px;flex-wrap:wrap;">
+    <button class="btn" type="submit" data-i18n="form.submit"></button>
+    <button class="btn btn-outline" type="button" id="backToCartBtn" data-i18n="form.back"></button>
+  </div>
+</form>
+
       </div>
     </section>
 
