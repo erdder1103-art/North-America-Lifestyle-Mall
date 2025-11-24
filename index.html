@@ -1,0 +1,1225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>NA Lifestyle Select – Amazon Gift Card Lucky Spin</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+
+  <!-- ================== Facebook Pixel (前端) ================== -->
+  <script>
+    !function(f,b,e,v,n,t,s){
+      if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+      n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+      if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+      n.queue=[];t=b.createElement(e);t.async=!0;
+      t.src='https://connect.facebook.net/en_US/fbevents.js';
+      s=b.getElementsByTagName(e)[0];
+      s.parentNode.insertBefore(t,s)
+    }(window, document,'script');
+    fbq('init', '4317732281771668');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+         src="https://www.facebook.com/tr?id=4317732281771668&ev=PageView&noscript=1"/>
+  </noscript>
+
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto,
+        "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
+    }
+
+    /* Modal 開啟時鎖住背景捲動 */
+    body.modal-open {
+      overflow: hidden;
+    }
+
+    body {
+      background-color: #f3f3f3;
+      color: #111;
+    }
+
+    a {
+      text-decoration: none;
+      color: inherit;
+    }
+
+    /* Header */
+    .header {
+      background-color: #131921;
+      color: #fff;
+      padding: 10px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .logo-group {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .logo-img {
+      height: 26px;
+      width: auto;
+      display: block;
+    }
+
+    .logo-img.logo2 {
+      height: 84px;
+    }
+
+    .lang-switch {
+      display: flex;
+      gap: 6px;
+    }
+
+    .lang-btn {
+      font-size: 12px;
+      padding: 4px 10px;
+      border-radius: 12px;
+      border: 1px solid transparent;
+      background-color: transparent;
+      color: #fff;
+      cursor: pointer;
+      opacity: 0.7;
+    }
+
+    .lang-btn.active {
+      border-color: #f3a847;
+      background-color: #232f3e;
+      opacity: 1;
+    }
+
+    .lang-btn:hover {
+      opacity: 1;
+    }
+
+    /* Hero 區塊 */
+    .hero {
+      background: linear-gradient(90deg, #febd69, #ffd194);
+      padding: 40px 16px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+    }
+
+    .hero-inner {
+      max-width: 900px;
+    }
+
+    .hero-title {
+      font-size: 26px;
+      font-weight: 700;
+      margin-bottom: 12px;
+    }
+
+    .hero-subtitle {
+      font-size: 16px;
+      margin-bottom: 20px;
+    }
+
+    .hero-badge {
+      display: inline-block;
+      background-color: #111;
+      color: #ffd814;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 12px;
+      margin-bottom: 10px;
+    }
+
+    .hero-button {
+      display: inline-block;
+      background-color: #ffd814;
+      border: 1px solid #fcd200;
+      padding: 10px 24px;
+      border-radius: 20px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: transform 0.1s, box-shadow 0.1s, background-color 0.1s;
+    }
+
+    .hero-button:hover {
+      background-color: #f7ca00;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .hero-note {
+      font-size: 12px;
+      margin-top: 8px;
+      opacity: 0.9;
+    }
+
+    /* 主內容區 */
+    .content {
+      max-width: 1100px;
+      margin: 24px auto 40px;
+      padding: 0 16px;
+      display: grid;
+      grid-template-columns: minmax(0, 2fr) minmax(0, 1.3fr);
+      gap: 24px;
+    }
+
+    @media (max-width: 900px) {
+      .content {
+        grid-template-columns: minmax(0, 1fr);
+      }
+    }
+
+    .card {
+      background-color: #fff;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(15, 17, 17, 0.15);
+      padding: 16px 18px 20px;
+    }
+
+    .card-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .card-subtitle {
+      font-size: 13px;
+      margin-bottom: 12px;
+      color: #555;
+    }
+
+    ul.bullet {
+      list-style: disc;
+      padding-left: 20px;
+      font-size: 13px;
+      color: #333;
+    }
+
+    ul.bullet li {
+      font-size: 14px;
+      font-weight: 600;
+      margin-bottom: 4px;
+    }
+
+    ul.bullet li + li {
+      margin-top: 4px;
+    }
+
+    .info-block {
+      margin-top: 16px;
+      border-top: 1px solid #e3e6e6;
+      padding-top: 10px;
+    }
+
+    .info-title {
+      font-size: 15px;
+      font-weight: 600;
+      margin-bottom: 6px;
+    }
+
+    .info-text {
+      font-size: 13px;
+      color: #555;
+      line-height: 1.5;
+    }
+
+    /* 輪盤區 */
+    .wheel-container {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      margin-top: 6px;
+    }
+
+    .wheel-wrapper {
+      position: relative;
+      width: 280px;
+      height: 280px;
+    }
+
+    @media (max-width: 480px) {
+      .wheel-wrapper {
+        width: 260px;
+        height: 260px;
+      }
+    }
+
+    .wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      border: 6px solid #111;
+      background-color: #ffd814;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      overflow: hidden;
+      z-index: 1;
+    }
+
+    /* 圖片輪盤：時間拉長 & ease-out */
+    .wheel-image {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transform-origin: 50% 50%;
+      transition: transform 3.2s ease-out;
+    }
+
+    .wheel-center {
+      width: 95px;
+      height: 95px;
+      background-color: #131921;
+      border-radius: 50%;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      color: #ffd814;
+      font-weight: 700;
+      font-size: 16px;
+      text-align: center;
+      box-shadow: 0 0 0 5px #fff;
+      cursor: pointer;
+      z-index: 3;
+      position: relative;
+    }
+
+    /* 指針：尖端朝下（這裡是關鍵） */
+    .pointer {
+      position: absolute;
+      top: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 0;
+      height: 0;
+      border-left: 14px solid transparent;
+      border-right: 14px solid transparent;
+      border-top: 26px solid #e47911;  /* 用 border-top 上色 → 三角形尖端向下 */
+      border-bottom: 0;
+      filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
+      z-index: 4;
+    }
+
+    .spin-button {
+      margin-top: 12px;
+      padding: 10px 28px;
+      border-radius: 24px;
+      border: 1px solid #fcd200;
+      background-color: #ffd814;
+      font-size: 15px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.1s, transform 0.1s, box-shadow 0.1s;
+    }
+
+    .spin-button:disabled {
+      cursor: not-allowed;
+      opacity: 0.6;
+      box-shadow: none;
+      transform: none;
+    }
+
+    .spin-button:not(:disabled):hover {
+      background-color: #f7ca00;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .spin-status {
+      font-size: 13px;
+      margin-top: 4px;
+      min-height: 18px;
+      color: #333;
+    }
+
+    .spin-status strong {
+      color: #b12704;
+    }
+
+    /* 表單 Modal */
+    .modal-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 50;
+      padding: 16px;
+    }
+
+    .modal {
+      background-color: #fff;
+      max-width: 420px;
+      width: 100%;
+      border-radius: 8px;
+      box-shadow: 0 4px 10px rgba(15, 17, 17, 0.3);
+      padding: 18px 18px 20px;
+      position: relative;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+
+    .modal-close {
+      position: absolute;
+      top: 8px;
+      right: 10px;
+      font-size: 18px;
+      cursor: pointer;
+      opacity: 0.6;
+    }
+
+    .modal-close:hover {
+      opacity: 1;
+    }
+
+    .modal-title {
+      font-size: 18px;
+      font-weight: 600;
+      margin-bottom: 8px;
+    }
+
+    .modal-subtitle {
+      font-size: 13px;
+      margin-bottom: 16px;
+      color: #555;
+    }
+
+    .form-row {
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .form-row label {
+      font-size: 13px;
+      font-weight: 500;
+    }
+
+    .form-row input,
+    .form-row select {
+      border: 1px solid #d5d9d9;
+      border-radius: 4px;
+      padding: 7px 8px;
+      font-size: 14px;
+      outline: none;
+      width: 100%;
+    }
+
+    .form-row input:focus,
+    .form-row select:focus {
+      border-color: #007185;
+      box-shadow: 0 0 0 1px #007185;
+    }
+
+    .name-flex {
+      display: flex;
+      gap: 8px;
+    }
+
+    .name-flex > div {
+      flex: 1;
+    }
+
+    .modal-actions {
+      margin-top: 10px;
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    .btn-secondary {
+      padding: 7px 14px;
+      border-radius: 4px;
+      border: 1px solid #d5d9d9;
+      background-color: #f0f2f2;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .btn-primary {
+      padding: 7px 16px;
+      border-radius: 4px;
+      border: 1px solid #fcd200;
+      background-color: #ffd814;
+      cursor: pointer;
+      font-size: 13px;
+      font-weight: 600;
+    }
+
+    .btn-primary:hover {
+      background-color: #f7ca00;
+    }
+
+    .helper-text {
+      font-size: 11px;
+      color: #777;
+      margin-top: 4px;
+      line-height: 1.4;
+    }
+
+    .footer {
+      font-size: 11px;
+      color: #555;
+      text-align: center;
+      padding: 12px 8px 24px;
+      line-height: 1.5;
+    }
+
+    /* 高質感成功彈窗 */
+    .success-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 60;
+      padding: 16px;
+    }
+
+    .success-modal {
+      background-color: #fff;
+      border-radius: 12px;
+      max-width: 360px;
+      width: 100%;
+      padding: 22px 22px 18px;
+      box-shadow: 0 8px 24px rgba(15, 17, 17, 0.35);
+      text-align: center;
+    }
+
+    .success-icon {
+      width: 54px;
+      height: 54px;
+      border-radius: 50%;
+      margin: 0 auto 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #ffd814, #f3a847);
+      color: #111;
+      font-size: 28px;
+      font-weight: 700;
+    }
+
+    .success-title {
+      font-size: 18px;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+
+    .success-text {
+      font-size: 13px;
+      color: #444;
+      line-height: 1.6;
+      margin-bottom: 16px;
+    }
+
+    .success-btn {
+      display: inline-block;
+      padding: 8px 20px;
+      border-radius: 999px;
+      border: 1px solid #fcd200;
+      background-color: #ffd814;
+      font-size: 14px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: background-color 0.1s, transform 0.1s, box-shadow 0.1s;
+    }
+
+    .success-btn:hover {
+      background-color: #f7ca00;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
+      transform: translateY(-1px);
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header class="header">
+    <div class="logo-group">
+      <img src="images/amazon-logo.png" alt="Amazon" class="logo-img amazon" />
+      <img src="images/logo2.png" alt="NA Lifestyle Select" class="logo-img logo2" />
+    </div>
+    <div class="lang-switch">
+      <button class="lang-btn active" data-lang="en">EN</button>
+      <button class="lang-btn" data-lang="zh">中文</button>
+    </div>
+  </header>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-inner">
+      <div class="hero-badge" data-i18n="hero_badge"></div>
+      <h1 class="hero-title" data-i18n="hero_title"></h1>
+      <p class="hero-subtitle" data-i18n="hero_subtitle"></p>
+      <a href="https://lifamall.com/" target="_blank" rel="noopener"
+         class="hero-button" id="goToMallBtn" data-i18n="hero_button"></a>
+      <p class="hero-note" data-i18n="hero_note"></p>
+    </div>
+  </section>
+
+  <!-- Main Content -->
+  <main class="content">
+    <!-- Left: 說明 / 活動規則 -->
+    <section class="card">
+      <h2 class="card-title" data-i18n="card_left_title"></h2>
+      <p class="card-subtitle" data-i18n="card_left_subtitle"></p>
+
+      <ul class="bullet">
+        <li data-i18n="card_left_list1"></li>
+        <li data-i18n="card_left_list2"></li>
+        <li data-i18n="card_left_list3"></li>
+      </ul>
+
+      <div class="info-block">
+        <div class="info-title" data-i18n="why_title"></div>
+        <p class="info-text" data-i18n="why_text1"></p>
+        <p class="info-text" style="margin-top:6px;" data-i18n="why_text2"></p>
+      </div>
+    </section>
+
+    <!-- Right: 輪盤 -->
+    <section class="card" id="wheelSection">
+      <h2 class="card-title" data-i18n="wheel_title"></h2>
+      <p class="card-subtitle" data-i18n="wheel_subtitle"></p>
+
+      <div class="wheel-container">
+        <div class="wheel-wrapper">
+          <div class="pointer"></div>
+          <div class="wheel">
+            <!-- 輪盤圖片 -->
+            <img src="images/wheel.png" alt="Amazon Gift Card Wheel"
+                 class="wheel-image" id="wheelImage" />
+            <div class="wheel-center" id="wheelCenter">
+              <div style="font-size:12px;">Amazon</div>
+              <div data-i18n="center_spin"></div>
+            </div>
+          </div>
+        </div>
+
+        <button class="spin-button" id="spinBtn" data-i18n="spin_button"></button>
+        <div class="spin-status" id="spinStatus"></div>
+      </div>
+    </section>
+  </main>
+
+  <!-- Modal: 資料填寫 -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <div class="modal-close" id="modalCloseBtn">&times;</div>
+      <h3 class="modal-title" data-i18n="modal_title"></h3>
+      <p class="modal-subtitle" id="modalPrizeText"></p>
+
+      <form id="claimForm">
+        <div class="form-row">
+          <div class="name-flex">
+            <div>
+              <label for="lastName" data-i18n="form_last_name"></label>
+              <input type="text" id="lastName" name="lastName" required />
+            </div>
+            <div>
+              <label for="firstName" data-i18n="form_first_name"></label>
+              <input type="text" id="firstName" name="firstName" required />
+            </div>
+          </div>
+        </div>
+
+        <div class="form-row">
+          <label for="email" data-i18n="form_email"></label>
+          <input type="email" id="email" name="email" required />
+        </div>
+
+        <div class="form-row">
+          <label for="region" data-i18n="form_region"></label>
+          <select id="region" name="region" required>
+            <option value="" disabled selected data-i18n="form_region_placeholder"></option>
+          </select>
+        </div>
+
+        <div class="form-row">
+          <label for="phone" data-i18n="form_phone"></label>
+          <input type="tel" id="phone" name="phone" required />
+        </div>
+
+        <p class="helper-text" data-i18n="helper_text"></p>
+
+        <div class="modal-actions">
+          <button type="button" class="btn-secondary" id="cancelBtn" data-i18n="btn_cancel"></button>
+          <button type="submit" class="btn-primary" data-i18n="btn_submit"></button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- 高質感感謝彈窗 -->
+  <div class="success-backdrop" id="successBackdrop">
+    <div class="success-modal">
+      <div class="success-icon">✓</div>
+      <h3 class="success-title" data-i18n="success_title"></h3>
+      <p class="success-text" id="successText"></p>
+      <button class="success-btn" id="successOkBtn" data-i18n="success_ok"></button>
+    </div>
+  </div>
+
+  <footer class="footer" data-i18n="footer_text"></footer>
+
+  <script>
+    // ======== 可調整的獎項（邏輯上永遠給 $50） =========
+    const prizeConfig = [
+      { label: "$5", amount: 5, weight: 40 },
+      { label: "$10", amount: 10, weight: 25 },
+      { label: "$20", amount: 20, weight: 15 },
+      { label: "$35", amount: 35, weight: 10 },
+      { label: "$40", amount: 40, weight: 7 },
+      { label: "$50", amount: 50, weight: 3 }
+    ];
+
+    // ======== FB Pixel helper =========
+    function trackPixel(eventName, params) {
+      try {
+        if (typeof fbq === "function") {
+          if (params && params.event_id) {
+            fbq("trackCustom", eventName, { event_id: params.event_id });
+          } else {
+            fbq("trackCustom", eventName);
+          }
+        } else {
+          console.log("Pixel event:", eventName, params || "");
+        }
+      } catch (e) {
+        console.log("Pixel error:", e);
+      }
+    }
+
+    // ======== FB CAPI（測試用，token 放前端） =========
+    const FB_PIXEL_ID = "4317732281771668";
+    const FB_CAPI_ACCESS_TOKEN = "EAAKOwamDiWUBQLTWDQYKDXKEJ3nSgnoDOBg5lIN8v5MmTDaw8ZBHZATDgYbGRPCRjvKrt4A4Y6QZAgZAPId0u3XczbmE0JAyLG7HMuL8NqD8f4jHzlGViTrvlGUJWyBkTbCQkFiROfzDUPRhhd1SHZB1UcvxXofUjXOmZASIcvUZA0xGtuNPJ57oB4GZA84HcYERPgZDZD";
+
+    function sendFbServerEvent(eventName, eventId, customData) {
+      try {
+        const url =
+          "https://graph.facebook.com/v18.0/" +
+          FB_PIXEL_ID +
+          "/events?access_token=" +
+          encodeURIComponent(FB_CAPI_ACCESS_TOKEN);
+
+        const payload = {
+          data: [
+            {
+              event_name: eventName,
+              event_time: Math.floor(Date.now() / 1000),
+              event_id: eventId,
+              action_source: "website",
+              event_source_url: window.location.href,
+              custom_data: customData || {}
+            }
+          ]
+        };
+
+        fetch(url, {
+          method: "POST",
+          keepalive: true,
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }).catch((err) => console.log("CAPI error:", err));
+      } catch (e) {
+        console.log("CAPI exception:", e);
+      }
+    }
+
+    function genEventId() {
+      return "evt_" + Date.now() + "_" + Math.random().toString(16).slice(2);
+    }
+
+    // ======== 一次抽獎限制 =========
+    const SPIN_STORAGE_KEY = "lifamall_spin_used";
+    function hasSpun() {
+      try {
+        return localStorage.getItem(SPIN_STORAGE_KEY) === "1";
+      } catch {
+        return false;
+      }
+    }
+    function markSpun() {
+      try {
+        localStorage.setItem(SPIN_STORAGE_KEY, "1");
+      } catch {}
+    }
+
+    // 測試模式：?test=1 無限轉
+    function isTestMode() {
+      return window.location.search.indexOf("test=1") !== -1;
+    }
+
+    // ======== Google Apps Script =========
+    const GOOGLE_SCRIPT_URL =
+      "https://script.google.com/macros/s/AKfycbyo3Wb_zIj1yHn-fBRlZH_4Xh2-61FxSRDa06wJOopAnrKjRp6q9yrZK1_hRZP5EEnXig/exec";
+
+    function sendToGoogleSheet(payload) {
+      if (!GOOGLE_SCRIPT_URL) {
+        console.log("Apps Script URL 未設定，只在 console 顯示：", payload);
+        return;
+      }
+      try {
+        fetch(GOOGLE_SCRIPT_URL, {
+          method: "POST",
+          mode: "no-cors",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        }).catch((err) => console.log("Apps Script error:", err));
+      } catch (e) {
+        console.log("Apps Script exception:", e);
+      }
+    }
+
+    // ======== 州別資料 =========
+    const usStates = [
+      { value: "AL", en: "Alabama", zh: "阿拉巴馬州" },
+      { value: "AK", en: "Alaska", zh: "阿拉斯加州" },
+      { value: "AZ", en: "Arizona", zh: "亞利桑那州" },
+      { value: "AR", en: "Arkansas", zh: "阿肯色州" },
+      { value: "CA", en: "California", zh: "加利福尼亞州" },
+      { value: "CO", en: "Colorado", zh: "科羅拉多州" },
+      { value: "CT", en: "Connecticut", zh: "康乃狄克州" },
+      { value: "DE", en: "Delaware", zh: "德拉瓦州" },
+      { value: "DC", en: "District of Columbia", zh: "哥倫比亞特區" },
+      { value: "FL", en: "Florida", zh: "佛羅里達州" },
+      { value: "GA", en: "Georgia", zh: "喬治亞州" },
+      { value: "HI", en: "Hawaii", zh: "夏威夷州" },
+      { value: "ID", en: "Idaho", zh: "愛達荷州" },
+      { value: "IL", en: "Illinois", zh: "伊利諾州" },
+      { value: "IN", en: "Indiana", zh: "印第安納州" },
+      { value: "IA", en: "Iowa", zh: "愛荷華州" },
+      { value: "KS", en: "Kansas", zh: "堪薩斯州" },
+      { value: "KY", en: "Kentucky", zh: "肯塔基州" },
+      { value: "LA", en: "Louisiana", zh: "路易斯安那州" },
+      { value: "ME", en: "Maine", zh: "緬因州" },
+      { value: "MD", en: "Maryland", zh: "馬里蘭州" },
+      { value: "MA", en: "Massachusetts", zh: "麻薩諸塞州" },
+      { value: "MI", en: "Michigan", zh: "密西根州" },
+      { value: "MN", en: "Minnesota", zh: "明尼蘇達州" },
+      { value: "MS", en: "Mississippi", zh: "密西西比州" },
+      { value: "MO", en: "Missouri", zh: "密蘇里州" },
+      { value: "MT", en: "Montana", zh: "蒙大拿州" },
+      { value: "NE", en: "Nebraska", zh: "內布拉斯加州" },
+      { value: "NV", en: "Nevada", zh: "內華達州" },
+      { value: "NH", en: "New Hampshire", zh: "新罕布夏州" },
+      { value: "NJ", en: "New Jersey", zh: "新澤西州" },
+      { value: "NM", en: "New Mexico", zh: "新墨西哥州" },
+      { value: "NY", en: "New York", zh: "紐約州" },
+      { value: "NC", en: "North Carolina", zh: "北卡羅來納州" },
+      { value: "ND", en: "North Dakota", zh: "北達科他州" },
+      { value: "OH", en: "Ohio", zh: "俄亥俄州" },
+      { value: "OK", en: "Oklahoma", zh: "奧克拉荷馬州" },
+      { value: "OR", en: "Oregon", zh: "奧勒岡州" },
+      { value: "PA", en: "Pennsylvania", zh: "賓夕法尼亞州" },
+      { value: "RI", en: "Rhode Island", zh: "羅德島州" },
+      { value: "SC", en: "South Carolina", zh: "南卡羅來納州" },
+      { value: "SD", en: "South Dakota", zh: "南達科他州" },
+      { value: "TN", en: "Tennessee", zh: "田納西州" },
+      { value: "TX", en: "Texas", zh: "德州" },
+      { value: "UT", en: "Utah", zh: "猶他州" },
+      { value: "VT", en: "Vermont", zh: "佛蒙特州" },
+      { value: "VA", en: "Virginia", zh: "維吉尼亞州" },
+      { value: "WA", en: "Washington", zh: "華盛頓州" },
+      { value: "WV", en: "West Virginia", zh: "西維吉尼亞州" },
+      { value: "WI", en: "Wisconsin", zh: "威斯康辛州" },
+      { value: "WY", en: "Wyoming", zh: "懷俄明州" },
+      { value: "PR", en: "Puerto Rico", zh: "波多黎各" },
+      { value: "OTHER", en: "Other / Outside U.S.", zh: "其他 / 非美國地區" }
+    ];
+
+    function buildRegionOptions(lang) {
+      const select = document.getElementById("region");
+      const current = select.value;
+      const placeholder = select.querySelector(
+        "option[data-i18n='form_region_placeholder']"
+      );
+      select.innerHTML = "";
+      select.appendChild(placeholder);
+
+      usStates.forEach((s) => {
+        const opt = document.createElement("option");
+        opt.value = s.value;
+        opt.textContent = lang === "zh" ? s.zh : s.en;
+        if (current && current === s.value) {
+          opt.selected = true;
+        }
+        select.appendChild(opt);
+      });
+    }
+
+    // ======== 多語文案 =========
+    const translations = {
+      en: {
+        hero_badge: "Welcome Event • New Shoppers",
+        hero_title:
+          "Discover North America Lifestyle Deals – Win Amazon Gift Cards up to $50",
+        hero_subtitle:
+          "NA Lifestyle Select is an online marketplace for everyday essentials curated for people living in North America. As a welcome event, you can spin the wheel for a chance to win Amazon Gift Cards worth $5, $10, $20, $35, $40 or $50.",
+        hero_button: "Visit NA Lifestyle Mall",
+        hero_note:
+          "No purchase necessary. This promotion is hosted by NA Lifestyle Select and is not sponsored or endorsed by Amazon.",
+
+        card_left_title: "About Our Welcome Event",
+        card_left_subtitle:
+          "We hope more shoppers in North America can discover NA Lifestyle Select. That’s why we are giving away Amazon Gift Cards that you can use directly on Amazon – even if you don’t buy anything from our site.",
+        card_left_list1:
+          "<strong>Prizes:</strong> 100% chance to get an Amazon Gift Card – prize amounts are $5 / $10 / $20 / $35 / $40 / $50.",
+        card_left_list2:
+          "<strong>Spin limit:</strong> Limited to one entry per person.",
+        card_left_list3:
+          "<strong>Prize delivery:</strong> Winners will receive the gift card code via email after information is verified.",
+
+        why_title: "Why Are We Giving Away Amazon Gift Cards?",
+        why_text1:
+          "Amazon is the most popular online shopping site in the U.S., and almost everyone already has an account. By giving Amazon Gift Cards, we make sure your prize is easy to use anywhere in North America, not limited to just our store.",
+        why_text2:
+          "This campaign is simply our way to introduce NA Lifestyle Select to more people living in North America. You can try your luck with the spin, learn about our marketplace, and decide later if our products fit your lifestyle.",
+
+        wheel_title: "Amazon Gift Card Lucky Wheel",
+        wheel_subtitle:
+          'Click "SPIN NOW" and wait for the wheel to stop. The pointer at the top shows which gift card amount you win.',
+        center_spin: "SPIN",
+
+        spin_button: "SPIN NOW",
+        spin_status_spinning: "Spinning... Good luck!",
+        spin_status_win:
+          "Congratulations! You hit the <strong>{amount} Amazon Gift Card JACKPOT</strong>.",
+        spin_used_message:
+          "You have already used your spin for this event. Thank you for participating!",
+
+        modal_title: "Jackpot! Claim Your Amazon Gift Card",
+        modal_subtitle_prefix: "You have won a ",
+        modal_subtitle_suffix:
+          " Amazon Gift Card. Please fill in the information below so we can send your prize.",
+
+        form_last_name: "Last Name",
+        form_first_name: "First Name",
+        form_email: "Email Address",
+        form_region: "State / Region",
+        form_region_placeholder: "Select your state",
+        form_phone: "Phone Number",
+
+        helper_text:
+          "Please provide accurate, real information. We will only use it to deliver the prize and will never ask for your password or payment information.",
+        btn_cancel: "Cancel",
+        btn_submit: "Submit",
+        success_title: "Form Submitted",
+        success_ok: "OK",
+        thankyou_message:
+          "Thank you! We will send your Amazon Gift Card code via email within 3–5 business days. Please also check your spam folder.",
+
+        footer_text:
+          "NA Lifestyle Select – North America lifestyle marketplace. This promotion is organized by NA Lifestyle Select and is not sponsored or endorsed by Amazon. No purchase necessary; void where prohibited."
+      },
+      zh: {
+        hero_badge: "限時活動 • 新客歡迎禮",
+        hero_title: "北美生活優選商城 · 轉轉樂抽 Amazon 禮品卡，最高 $50",
+        hero_subtitle:
+          "「北美生活優選商城」（NA Lifestyle Select）是專為在北美生活的人，嚴選日常用品與生活好物的線上商城。現在舉辦新客歡迎活動，只要參加轉盤，就有機會獲得 $5 / $10 / $20 / $35 / $40 / $50 Amazon Gift Card。",
+        hero_button: "前往北美生活購物網",
+        hero_note:
+          "無需消費即可參加。本活動由「北美生活優選商城 NA Lifestyle Select」舉辦，與 Amazon 無任何贊助或代言關係。",
+
+        card_left_title: "活動與商城介紹",
+        card_left_subtitle:
+          "我們希望更多生活在北美的消費者認識「北美生活優選商城」。因此透過贈送 Amazon 禮品卡的方式，讓你就算尚未在我們商城購物，也能先獲得一份實用的獎勵，直接在 Amazon 使用。",
+        card_left_list1:
+          "<strong>獎項內容：</strong>100% 有 Amazon 禮品卡，中獎金額為 $5 / $10 / $20 / $35 / $40 / $50。",
+        card_left_list2:
+          "<strong>抽獎次數：</strong>每人限定參與抽獎一次。",
+        card_left_list3:
+          "<strong>獎品寄送：</strong>中獎者填寫資料並確認後，我們會將禮品卡序號以 Email 寄送給你。",
+
+        why_title: "為什麼選擇送 Amazon 禮品卡？",
+        why_text1:
+          "Amazon 是美國最常被使用的線上購物網站，幾乎人人都有帳號。選擇 Amazon 禮品卡當獎品，是希望獎勵能在北美各地都方便使用，而不是只能限定在我們自己的商城。",
+        why_text2:
+          "這個活動只是想用一個輕鬆的方式，讓更多在北美生活的你認識「北美生活優選商城」。你可以先玩轉盤拿獎品，再決定未來是否到商城逛逛、看看有沒有適合你生活需求的商品。",
+
+        wheel_title: "Amazon 禮品卡幸運轉盤",
+        wheel_subtitle:
+          "點擊「開始旋轉」，等待轉盤停止，上方指針指到的金額就是你獲得的 Amazon 禮品卡面額。",
+        center_spin: "轉動",
+
+        spin_button: "開始旋轉",
+        spin_status_spinning: "轉動中… 祝你好運！",
+        spin_status_win:
+          "恭喜！你轉到 <strong>{amount} Amazon 禮品卡大獎</strong>！",
+        spin_used_message: "您已使用本次活動的抽獎機會，感謝參與！",
+
+        modal_title: "恭喜抽中大獎，填寫資料領取禮品卡",
+        modal_subtitle_prefix: "你已中獎，獲得 ",
+        modal_subtitle_suffix:
+          " Amazon 禮品卡，請填寫以下資料以便我們寄送獎品。",
+
+        form_last_name: "姓",
+        form_first_name: "名",
+        form_email: "電子郵件",
+        form_region: "居住州別 / 地區",
+        form_region_placeholder: "請選擇州別",
+        form_phone: "電話號碼",
+
+        helper_text:
+          "請務必填寫真實且正確的資料，以免影響領獎資格。你的資料僅用於寄送獎品，我們不會索取密碼或信用卡資訊，請安心填寫。",
+        btn_cancel: "取消",
+        btn_submit: "送出",
+        success_title: "填寫完成",
+        success_ok: "確定",
+        thankyou_message:
+          "感謝填寫！我們將在 3–5 個工作天內，把 Amazon 禮品卡序號寄至你的電子郵件，請留意收信及垃圾郵件匣。",
+
+        footer_text:
+          "北美生活優選商城 NA Lifestyle Select – 專為北美生活族群嚴選好物。本活動由 NA Lifestyle Select 主辦，與 Amazon 無任何贊助或代言關係。無需消費即可參加，部分地區若有法規限制則不適用。"
+      }
+    };
+
+    let currentLang = "en";
+    const LANG_STORAGE_KEY = "lifamall_lang";
+
+    function saveLang(lang) {
+      try {
+        localStorage.setItem(LANG_STORAGE_KEY, lang);
+      } catch {}
+    }
+    function loadLang() {
+      try {
+        return localStorage.getItem(LANG_STORAGE_KEY) || "en";
+      } catch {
+        return "en";
+      }
+    }
+
+    // ======== DOM 取得 =========
+    const wheelImage = document.getElementById("wheelImage");
+    const spinBtn = document.getElementById("spinBtn");
+    const spinStatus = document.getElementById("spinStatus");
+    const wheelCenter = document.getElementById("wheelCenter");
+    const goToMallBtn = document.getElementById("goToMallBtn");
+
+    const modalBackdrop = document.getElementById("modalBackdrop");
+    const modalCloseBtn = document.getElementById("modalCloseBtn");
+    const cancelBtn = document.getElementById("cancelBtn");
+    const modalPrizeText = document.getElementById("modalPrizeText");
+    const claimForm = document.getElementById("claimForm");
+
+    const successBackdrop = document.getElementById("successBackdrop");
+    const successText = document.getElementById("successText");
+    const successOkBtn = document.getElementById("successOkBtn");
+
+    const langButtons = document.querySelectorAll(".lang-btn");
+
+    let isSpinning = false;
+    let currentRotation = 0;
+    let lastPrize = null;
+
+    // Hero URL 像素
+    if (goToMallBtn) {
+      goToMallBtn.addEventListener("click", () => {
+        const id = genEventId();
+        trackPixel("ClickMallURL", { event_id: id });
+        sendFbServerEvent("ClickMallURL", id, {});
+      });
+    }
+
+    // 中心也可以開始旋轉
+    wheelCenter.addEventListener("click", () => {
+      spinBtn.click();
+    });
+
+    function updateSpinAvailability() {
+      const t = translations[currentLang];
+      if (!isTestMode() && hasSpun()) {
+        spinBtn.disabled = true;
+        spinStatus.innerHTML = t.spin_used_message;
+      } else {
+        spinBtn.disabled = false;
+      }
+    }
+
+    // 成功彈窗
+    function showSuccessPopup(message) {
+      successText.textContent = message;
+      successBackdrop.style.display = "flex";
+    }
+    function hideSuccessPopup() {
+      successBackdrop.style.display = "none";
+    }
+    successOkBtn.addEventListener("click", hideSuccessPopup);
+
+    // 轉盤：永遠中 $50，動畫從快到慢
+    spinBtn.addEventListener("click", () => {
+      if (isSpinning) return;
+
+      if (!isTestMode() && hasSpun()) {
+        const t = translations[currentLang];
+        spinStatus.innerHTML = t.spin_used_message;
+        return;
+      }
+
+      if (!isTestMode()) {
+        markSpun();
+      }
+
+      const spinEventId = genEventId();
+      trackPixel("StartSpin", { event_id: spinEventId });
+      sendFbServerEvent("StartSpin", spinEventId, {});
+
+      isSpinning = true;
+      spinBtn.disabled = true;
+
+      const t = translations[currentLang];
+      spinStatus.textContent = t.spin_status_spinning;
+
+      // 固定大獎 $50
+      lastPrize = prizeConfig.find((p) => p.amount === 50);
+
+      // 4~6 圈，最後偏左或偏右一點，製造「差一點」感覺
+      const baseSpins = 4 + Math.floor(Math.random() * 3); // 4,5,6
+      const fullRotation = baseSpins * 360;
+      const side = Math.random() < 0.5 ? -1 : 1;
+      const nearEdgeOffset = 20 + Math.random() * 8; // 20~28 度
+      const targetRotation = fullRotation + side * nearEdgeOffset;
+
+      currentRotation = targetRotation;
+      wheelImage.style.transition = "transform 3.2s ease-out";
+      wheelImage.style.transform = "rotate(" + currentRotation + "deg)";
+
+      setTimeout(() => {
+        isSpinning = false;
+        if (!isTestMode()) {
+          spinBtn.disabled = true;
+        } else {
+          spinBtn.disabled = false;
+        }
+
+        const t2 = translations[currentLang];
+        const msg = t2.spin_status_win.replace("{amount}", lastPrize.label);
+        spinStatus.innerHTML = msg;
+
+        openModal();
+      }, 3300);
+    });
+
+    function openModal() {
+      if (!lastPrize) return;
+      const t = translations[currentLang];
+      modalPrizeText.textContent =
+        t.modal_subtitle_prefix + lastPrize.label + t.modal_subtitle_suffix;
+      modalBackdrop.style.display = "flex";
+      claimForm.reset();
+      document.body.classList.add("modal-open");
+    }
+
+    function closeModal() {
+      modalBackdrop.style.display = "none";
+      document.body.classList.remove("modal-open");
+    }
+
+    modalCloseBtn.addEventListener("click", closeModal);
+    cancelBtn.addEventListener("click", closeModal);
+
+    claimForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+      const formData = {
+        prize: lastPrize ? lastPrize.label : "",
+        lastName: claimForm.lastName.value.trim(),
+        firstName: claimForm.firstName.value.trim(),
+        email: claimForm.email.value.trim(),
+        region: claimForm.region.value,
+        phone: claimForm.phone.value.trim()
+      };
+
+      // 給 Apps Script 的 payload
+      const payload = {
+        sheetName: "Amazon",        // 分頁名稱
+        time: new Date().toISOString(),
+        last_name: formData.lastName,
+        first_name: formData.firstName,
+        email: formData.email,
+        region: formData.region,
+        phone: formData.phone,
+        lang: currentLang,
+        prize: formData.prize,
+        user_agent: navigator.userAgent
+      };
+
+      console.log("Claim form data:", payload);
+
+      const submitEventId = genEventId();
+      trackPixel("SubmitSpinForm", { event_id: submitEventId });
+      sendFbServerEvent("SubmitSpinForm", submitEventId, {
+        currency: "USD",
+        value: 0
+      });
+
+      sendToGoogleSheet(payload);
+
+      const t = translations[currentLang];
+      closeModal();
+      showSuccessPopup(t.thankyou_message);
+    });
+
+    // 語系套用
+    function applyLanguage(lang) {
+      currentLang = lang;
+      saveLang(lang);
+
+      document.documentElement.lang =
+        lang === "en" ? "en" : "zh-Hant";
+
+      const t = translations[lang];
+      document.querySelectorAll("[data-i18n]").forEach((el) => {
+        const key = el.getAttribute("data-i18n");
+        if (!t[key]) return;
+        if (el === spinStatus) return;
+        el.innerHTML = t[key];
+      });
+
+      buildRegionOptions(lang);
+      updateSpinAvailability();
+    }
+
+    // 語系按鈕
+    langButtons.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const lang = btn.getAttribute("data-lang");
+        langButtons.forEach((b) => b.classList.remove("active"));
+        btn.classList.add("active");
+        applyLanguage(lang);
+
+        if (lastPrize && spinStatus.innerHTML && !hasSpun()) {
+          const t = translations[currentLang];
+          const msg = t.spin_status_win.replace("{amount}", lastPrize.label);
+          spinStatus.innerHTML = msg;
+        }
+      });
+    });
+
+    // 初始化語系
+    const initialLang = loadLang();
+    applyLanguage(initialLang);
+    langButtons.forEach((btn) => {
+      if (btn.getAttribute("data-lang") === initialLang) {
+        btn.classList.add("active");
+      } else {
+        btn.classList.remove("active");
+      }
+    });
+  </script>
+</body>
+</html>
