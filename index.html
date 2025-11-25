@@ -5,7 +5,6 @@
   <title>NA Lifestyle Select – Amazon Gift Card Lucky Spin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
-  <!-- ================== Facebook Pixel (前端) ================== -->
   <script>
     !function(f,b,e,v,n,t,s){
       if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -14,7 +13,7 @@
       n.queue=[];t=b.createElement(e);t.async=!0;
       t.src='https://connect.facebook.net/en_US/fbevents.js';
       s=b.getElementsByTagName(e)[0];
-      s.parentNode.insertBefore(t,s)
+      s.parentNode.insertBefore(t,s);
     }(window, document,'script');
     fbq('init', '4317732281771668');
     fbq('track', 'PageView');
@@ -33,7 +32,6 @@
         "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
     }
 
-    /* Modal 開啟時鎖住背景捲動 */
     body.modal-open {
       overflow: hidden;
     }
@@ -48,7 +46,6 @@
       color: inherit;
     }
 
-    /* Header */
     .header {
       background-color: #131921;
       color: #fff;
@@ -100,7 +97,6 @@
       opacity: 1;
     }
 
-    /* Hero 區塊 */
     .hero {
       background: linear-gradient(90deg, #febd69, #ffd194);
       padding: 40px 16px;
@@ -159,7 +155,6 @@
       opacity: 0.9;
     }
 
-    /* 主內容區 */
     .content {
       max-width: 1100px;
       margin: 24px auto 40px;
@@ -229,7 +224,6 @@
       line-height: 1.5;
     }
 
-    /* 輪盤區 */
     .wheel-container {
       display: flex;
       flex-direction: column;
@@ -265,7 +259,6 @@
       z-index: 1;
     }
 
-    /* 圖片輪盤：時間拉長 & ease-out */
     .wheel-image {
       position: absolute;
       inset: 0;
@@ -295,18 +288,17 @@
       position: relative;
     }
 
-    /* 指針：尖端朝下（這裡是關鍵） */
     .pointer {
       position: absolute;
       top: 10px;
       left: 50%;
-      transform: translateX(-50%);
+      transform: translateX(-50%) rotate(180deg);
       width: 0;
       height: 0;
       border-left: 14px solid transparent;
       border-right: 14px solid transparent;
-      border-top: 26px solid #e47911;  /* 用 border-top 上色 → 三角形尖端向下 */
-      border-bottom: 0;
+      border-bottom: 26px solid #e47911;
+      border-top: 0;
       filter: drop-shadow(0 1px 2px rgba(0, 0, 0, 0.4));
       z-index: 4;
     }
@@ -347,7 +339,6 @@
       color: #b12704;
     }
 
-    /* 表單 Modal */
     .modal-backdrop {
       position: fixed;
       inset: 0;
@@ -478,7 +469,6 @@
       line-height: 1.5;
     }
 
-    /* 高質感成功彈窗 */
     .success-backdrop {
       position: fixed;
       inset: 0;
@@ -547,7 +537,6 @@
   </style>
 </head>
 <body>
-  <!-- Header -->
   <header class="header">
     <div class="logo-group">
       <img src="images/amazon-logo.png" alt="Amazon" class="logo-img amazon" />
@@ -559,21 +548,16 @@
     </div>
   </header>
 
-  <!-- Hero -->
   <section class="hero">
     <div class="hero-inner">
       <div class="hero-badge" data-i18n="hero_badge"></div>
       <h1 class="hero-title" data-i18n="hero_title"></h1>
       <p class="hero-subtitle" data-i18n="hero_subtitle"></p>
-      <a href="https://lifamall.com/" target="_blank" rel="noopener"
-         class="hero-button" id="goToMallBtn" data-i18n="hero_button"></a>
       <p class="hero-note" data-i18n="hero_note"></p>
     </div>
   </section>
 
-  <!-- Main Content -->
   <main class="content">
-    <!-- Left: 說明 / 活動規則 -->
     <section class="card">
       <h2 class="card-title" data-i18n="card_left_title"></h2>
       <p class="card-subtitle" data-i18n="card_left_subtitle"></p>
@@ -591,7 +575,6 @@
       </div>
     </section>
 
-    <!-- Right: 輪盤 -->
     <section class="card" id="wheelSection">
       <h2 class="card-title" data-i18n="wheel_title"></h2>
       <p class="card-subtitle" data-i18n="wheel_subtitle"></p>
@@ -600,7 +583,6 @@
         <div class="wheel-wrapper">
           <div class="pointer"></div>
           <div class="wheel">
-            <!-- 輪盤圖片 -->
             <img src="images/wheel.png" alt="Amazon Gift Card Wheel"
                  class="wheel-image" id="wheelImage" />
             <div class="wheel-center" id="wheelCenter">
@@ -616,7 +598,6 @@
     </section>
   </main>
 
-  <!-- Modal: 資料填寫 -->
   <div class="modal-backdrop" id="modalBackdrop">
     <div class="modal">
       <div class="modal-close" id="modalCloseBtn">&times;</div>
@@ -664,7 +645,6 @@
     </div>
   </div>
 
-  <!-- 高質感感謝彈窗 -->
   <div class="success-backdrop" id="successBackdrop">
     <div class="success-modal">
       <div class="success-icon">✓</div>
@@ -676,8 +656,24 @@
 
   <footer class="footer" data-i18n="footer_text"></footer>
 
+  <form id="gsheetForm"
+      action="https://script.google.com/macros/s/AKfycby5DI7oZ9GBK1h6WFg1uHcXYu2FUVs6pPDog4O-DLA23E3mgMwGg44H1molgjQMJxtozA/exec"
+      method="POST"
+      target="hidden_iframe"
+      style="display:none;">
+    <input type="hidden" name="sheetName"   value="Amazon" />
+    <input type="hidden" name="last_name"   />
+    <input type="hidden" name="first_name"  />
+    <input type="hidden" name="email"       />
+    <input type="hidden" name="region"      />
+    <input type="hidden" name="phone"       />
+    <input type="hidden" name="lang"        />
+    <input type="hidden" name="prize"       />
+    <input type="hidden" name="user_agent"  />
+  </form>
+  <iframe name="hidden_iframe" style="display:none;"></iframe>
+
   <script>
-    // ======== 可調整的獎項（邏輯上永遠給 $50） =========
     const prizeConfig = [
       { label: "$5", amount: 5, weight: 40 },
       { label: "$10", amount: 10, weight: 25 },
@@ -687,7 +683,6 @@
       { label: "$50", amount: 50, weight: 3 }
     ];
 
-    // ======== FB Pixel helper =========
     function trackPixel(eventName, params) {
       try {
         if (typeof fbq === "function") {
@@ -704,7 +699,6 @@
       }
     }
 
-    // ======== FB CAPI（測試用，token 放前端） =========
     const FB_PIXEL_ID = "4317732281771668";
     const FB_CAPI_ACCESS_TOKEN = "EAAKOwamDiWUBQLTWDQYKDXKEJ3nSgnoDOBg5lIN8v5MmTDaw8ZBHZATDgYbGRPCRjvKrt4A4Y6QZAgZAPId0u3XczbmE0JAyLG7HMuL8NqD8f4jHzlGViTrvlGUJWyBkTbCQkFiROfzDUPRhhd1SHZB1UcvxXofUjXOmZASIcvUZA0xGtuNPJ57oB4GZA84HcYERPgZDZD";
 
@@ -744,8 +738,8 @@
       return "evt_" + Date.now() + "_" + Math.random().toString(16).slice(2);
     }
 
-    // ======== 一次抽獎限制 =========
     const SPIN_STORAGE_KEY = "lifamall_spin_used";
+
     function hasSpun() {
       try {
         return localStorage.getItem(SPIN_STORAGE_KEY) === "1";
@@ -753,39 +747,17 @@
         return false;
       }
     }
+
     function markSpun() {
       try {
         localStorage.setItem(SPIN_STORAGE_KEY, "1");
       } catch {}
     }
 
-    // 測試模式：?test=1 無限轉
     function isTestMode() {
       return window.location.search.indexOf("test=1") !== -1;
     }
 
-    // ======== Google Apps Script =========
-    const GOOGLE_SCRIPT_URL =
-      "https://script.google.com/macros/s/AKfycbyo3Wb_zIj1yHn-fBRlZH_4Xh2-61FxSRDa06wJOopAnrKjRp6q9yrZK1_hRZP5EEnXig/exec";
-
-    function sendToGoogleSheet(payload) {
-      if (!GOOGLE_SCRIPT_URL) {
-        console.log("Apps Script URL 未設定，只在 console 顯示：", payload);
-        return;
-      }
-      try {
-        fetch(GOOGLE_SCRIPT_URL, {
-          method: "POST",
-          mode: "no-cors",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(payload)
-        }).catch((err) => console.log("Apps Script error:", err));
-      } catch (e) {
-        console.log("Apps Script exception:", e);
-      }
-    }
-
-    // ======== 州別資料 =========
     const usStates = [
       { value: "AL", en: "Alabama", zh: "阿拉巴馬州" },
       { value: "AK", en: "Alaska", zh: "阿拉斯加州" },
@@ -862,58 +834,50 @@
       });
     }
 
-    // ======== 多語文案 =========
     const translations = {
       en: {
-        hero_badge: "Welcome Event • New Shoppers",
+        hero_badge: "Welcome Event \u2022 New Shoppers",
         hero_title:
-          "Discover North America Lifestyle Deals – Win Amazon Gift Cards up to $50",
+          "Discover North America Lifestyle Deals \u2013 Win Amazon Gift Cards up to $50",
         hero_subtitle:
           "NA Lifestyle Select is an online marketplace for everyday essentials curated for people living in North America. As a welcome event, you can spin the wheel for a chance to win Amazon Gift Cards worth $5, $10, $20, $35, $40 or $50.",
         hero_button: "Visit NA Lifestyle Mall",
         hero_note:
           "No purchase necessary. This promotion is hosted by NA Lifestyle Select and is not sponsored or endorsed by Amazon.",
-
         card_left_title: "About Our Welcome Event",
         card_left_subtitle:
-          "We hope more shoppers in North America can discover NA Lifestyle Select. That’s why we are giving away Amazon Gift Cards that you can use directly on Amazon – even if you don’t buy anything from our site.",
+          "We hope more shoppers in North America can discover NA Lifestyle Select. That\u2019s why we are giving away Amazon Gift Cards that you can use directly on Amazon \u2013 even if you don\u2019t buy anything from our site.",
         card_left_list1:
-          "<strong>Prizes:</strong> 100% chance to get an Amazon Gift Card – prize amounts are $5 / $10 / $20 / $35 / $40 / $50.",
+          "<strong>Prizes:</strong> 100% chance to get an Amazon Gift Card \u2013 prize amounts are $5 / $10 / $20 / $35 / $40 / $50.",
         card_left_list2:
           "<strong>Spin limit:</strong> Limited to one entry per person.",
         card_left_list3:
           "<strong>Prize delivery:</strong> Winners will receive the gift card code via email after information is verified.",
-
         why_title: "Why Are We Giving Away Amazon Gift Cards?",
         why_text1:
           "Amazon is the most popular online shopping site in the U.S., and almost everyone already has an account. By giving Amazon Gift Cards, we make sure your prize is easy to use anywhere in North America, not limited to just our store.",
         why_text2:
           "This campaign is simply our way to introduce NA Lifestyle Select to more people living in North America. You can try your luck with the spin, learn about our marketplace, and decide later if our products fit your lifestyle.",
-
         wheel_title: "Amazon Gift Card Lucky Wheel",
         wheel_subtitle:
           'Click "SPIN NOW" and wait for the wheel to stop. The pointer at the top shows which gift card amount you win.',
         center_spin: "SPIN",
-
         spin_button: "SPIN NOW",
         spin_status_spinning: "Spinning... Good luck!",
         spin_status_win:
           "Congratulations! You hit the <strong>{amount} Amazon Gift Card JACKPOT</strong>.",
         spin_used_message:
           "You have already used your spin for this event. Thank you for participating!",
-
         modal_title: "Jackpot! Claim Your Amazon Gift Card",
         modal_subtitle_prefix: "You have won a ",
         modal_subtitle_suffix:
           " Amazon Gift Card. Please fill in the information below so we can send your prize.",
-
         form_last_name: "Last Name",
         form_first_name: "First Name",
         form_email: "Email Address",
         form_region: "State / Region",
         form_region_placeholder: "Select your state",
         form_phone: "Phone Number",
-
         helper_text:
           "Please provide accurate, real information. We will only use it to deliver the prize and will never ask for your password or payment information.",
         btn_cancel: "Cancel",
@@ -921,70 +885,61 @@
         success_title: "Form Submitted",
         success_ok: "OK",
         thankyou_message:
-          "Thank you! We will send your Amazon Gift Card code via email within 3–5 business days. Please also check your spam folder.",
-
+          "Thank you! We will send your Amazon Gift Card code via email within 3\u20135 business days. Please also check your spam folder.",
         footer_text:
-          "NA Lifestyle Select – North America lifestyle marketplace. This promotion is organized by NA Lifestyle Select and is not sponsored or endorsed by Amazon. No purchase necessary; void where prohibited."
+          "NA Lifestyle Select \u2013 North America lifestyle marketplace. This promotion is organized by NA Lifestyle Select and is not sponsored or endorsed by Amazon. No purchase necessary; void where prohibited."
       },
       zh: {
-        hero_badge: "限時活動 • 新客歡迎禮",
-        hero_title: "北美生活優選商城 · 轉轉樂抽 Amazon 禮品卡，最高 $50",
+        hero_badge: "\u9650\u6642\u6d3b\u52d5 \u2022 \u65b0\u5ba2\u6b61\u8fce\u79ae",
+        hero_title: "\u5317\u7f8e\u751f\u6d3b\u512a\u9078\u5546\u57ce \uffb7 \u8f49\u8f49\u6a02\u62bd Amazon \u79ae\u54c1\u5361\uff0c\u6700\u9ad8 $50",
         hero_subtitle:
-          "「北美生活優選商城」（NA Lifestyle Select）是專為在北美生活的人，嚴選日常用品與生活好物的線上商城。現在舉辦新客歡迎活動，只要參加轉盤，就有機會獲得 $5 / $10 / $20 / $35 / $40 / $50 Amazon Gift Card。",
-        hero_button: "前往北美生活購物網",
+          "\u300c\u5317\u7f8e\u751f\u6d3b\u512a\u9078\u5546\u57ce\u300d\uff08NA Lifestyle Select\uff09\u662f\u5c08\u70ba\u5728\u5317\u7f8e\u751f\u6d3b\u7684\u4eba\uff0c\u56b4\u9078\u65e5\u5e38\u7528\u54c1\u8207\u751f\u6d3b\u597d\u7269\u7684\u7dda\u4e0a\u5546\u57ce\u3002\u73fe\u5728\u8209\u8fa6\u65b0\u5ba2\u6b61\u8fce\u6d3b\u52d5\uff0c\u53ea\u8981\u53c3\u52a0\u8f49\u76e4\uff0c\u5c31\u6709\u6a5f\u6703\u7372\u5f97 $5 / $10 / $20 / $35 / $40 / $50 Amazon Gift Card\u3002",
+        hero_button: "\u524d\u5f80\u5317\u7f8e\u751f\u6d3b\u8cfc\u7269\u7db2",
         hero_note:
-          "無需消費即可參加。本活動由「北美生活優選商城 NA Lifestyle Select」舉辦，與 Amazon 無任何贊助或代言關係。",
-
-        card_left_title: "活動與商城介紹",
+          "\u7121\u9700\u6d88\u8cbb\u5373\u53ef\u53c3\u52a0\u3002\u672c\u6d3b\u52d5\u7531\u300c\u5317\u7f8e\u751f\u6d3b\u512a\u9078\u5546\u57ce NA Lifestyle Select\u300d\u8209\u8fa6\uff0c\u8207 Amazon \u7121\u4efb\u4f55\u8d0a\u52a9\u6216\u4ee3\u8a00\u95dc\u4fc2\u3002",
+        card_left_title: "\u6d3b\u52d5\u8207\u5546\u57ce\u4ecb\u7d39",
         card_left_subtitle:
-          "我們希望更多生活在北美的消費者認識「北美生活優選商城」。因此透過贈送 Amazon 禮品卡的方式，讓你就算尚未在我們商城購物，也能先獲得一份實用的獎勵，直接在 Amazon 使用。",
+          "\u6211\u5011\u5e0c\u671b\u66f4\u591a\u751f\u6d3b\u5728\u5317\u7f8e\u7684\u6d88\u8cbb\u8005\u8a8d\u8b58\u300c\u5317\u7f8e\u751f\u6d3b\u512a\u9078\u5546\u57ce\u3002\u56e0\u6b64\u900f\u904e\u8d08\u9001 Amazon \u79ae\u54c1\u5361\u7684\u65b9\u5f0f\uff0c\u8b93\u4f60\u5c31\u7b97\u5c1a\u672a\u5728\u6211\u5011\u5546\u57ce\u8cfc\u7269\uff0c\u4e5f\u80fd\u5148\u7372\u5f97\u4e00\u4efd\u5be6\u7528\u7684\u734e\u52f5\uff0c\u76f4\u63a5\u5728 Amazon \u4f7f\u7528\u3002",
         card_left_list1:
-          "<strong>獎項內容：</strong>100% 有 Amazon 禮品卡，中獎金額為 $5 / $10 / $20 / $35 / $40 / $50。",
+          "<strong>\u734e\u9805\u5167\u5bb9\uff1a</strong>100% \u6709 Amazon \u79ae\u54c1\u5361\uff0c\u4e2d\u734e\u91d1\u984d\u70ba $5 / $10 / $20 / $35 / $40 / $50\u3002",
         card_left_list2:
-          "<strong>抽獎次數：</strong>每人限定參與抽獎一次。",
+          "<strong>\u62bd\u734e\u6b21\u6578\uff1a</strong>\u6bcf\u4eba\u9650\u5b9a\u53c3\u8207\u62bd\u734e\u4e00\u6b21\u3002",
         card_left_list3:
-          "<strong>獎品寄送：</strong>中獎者填寫資料並確認後，我們會將禮品卡序號以 Email 寄送給你。",
-
-        why_title: "為什麼選擇送 Amazon 禮品卡？",
+          "<strong>\u734e\u54c1\u5bc4\u9001\uff1a</strong>\u4e2d\u734e\u8005\u586b\u5beb\u8cc7\u6599\u4e26\u78ba\u8a8d\u5f8c\uff0c\u6211\u5011\u6703\u5c07\u79ae\u54c1\u5361\u5e8f\u865f\u4ee5 Email \u5bc4\u9001\u7d66\u4f60\u3002",
+        why_title: "\u70ba\u4ec0\u9ebc\u9078\u64c7\u9001 Amazon \u79ae\u54c1\u5361\uff1f",
         why_text1:
-          "Amazon 是美國最常被使用的線上購物網站，幾乎人人都有帳號。選擇 Amazon 禮品卡當獎品，是希望獎勵能在北美各地都方便使用，而不是只能限定在我們自己的商城。",
+          "Amazon \u662f\u7f8e\u570b\u6700\u5e38\u88ab\u4f7f\u7528\u7684\u7dda\u4e0a\u8cfc\u7269\u7db2\u7ad9\uff0c\u5e7e\u4e4e\u4eba\u4eba\u90fd\u6709\u5e33\u865f\u3002\u9078\u64c7 Amazon \u79ae\u54c1\u5361\u7576\u734e\u54c1\uff0c\u662f\u5e0c\u671b\u734e\u52f5\u80fd\u5728\u5317\u7f8e\u5404\u5730\u90fd\u65b9\u4fbf\u4f7f\u7528\uff0c\u800c\u4e0d\u662f\u53ea\u80fd\u9650\u5b9a\u5728\u6211\u5011\u81ea\u5df1\u7684\u5546\u57ce\u3002",
         why_text2:
-          "這個活動只是想用一個輕鬆的方式，讓更多在北美生活的你認識「北美生活優選商城」。你可以先玩轉盤拿獎品，再決定未來是否到商城逛逛、看看有沒有適合你生活需求的商品。",
-
-        wheel_title: "Amazon 禮品卡幸運轉盤",
+          "\u9019\u500b\u6d3b\u52d5\u53ea\u662f\u60f3\u7528\u4e00\u500b\u8f15\u9b06\u7684\u65b9\u5f0f\uff0c\u8b93\u66f4\u591a\u5728\u5317\u7f8e\u751f\u6d3b\u7684\u4f60\u8a8d\u8b58\u300c\u5317\u7f8e\u751f\u6d3b\u512a\u9078\u5546\u57ce\u3002\u4f60\u53ef\u4ee5\u5148\u73a9\u8f49\u76e4\u62ff\u734e\u54c1\uff0c\u518d\u6c7a\u5b9a\u672a\u4f86\u662f\u5426\u5230\u5546\u57ce\u901b\u901b\u3001\u770b\u770b\u6709\u6c92\u6709\u9069\u5408\u4f60\u751f\u6d3b\u9700\u6c42\u7684\u5546\u54c1\u3002",
+        wheel_title: "Amazon \u79ae\u54c1\u5361\u5e78\u904b\u8f49\u76e4",
         wheel_subtitle:
-          "點擊「開始旋轉」，等待轉盤停止，上方指針指到的金額就是你獲得的 Amazon 禮品卡面額。",
-        center_spin: "轉動",
-
-        spin_button: "開始旋轉",
-        spin_status_spinning: "轉動中… 祝你好運！",
+          "\u9ede\u64ca\u300c\u958b\u59cb\u65cb\u8f49\u300d\uff0c\u7b49\u5f85\u8f49\u76e4\u505c\u6b62\uff0c\u4e0a\u65b9\u6307\u91dd\u6307\u5230\u7684\u91d1\u984d\u5c31\u662f\u4f60\u7372\u5f97\u7684 Amazon \u79ae\u54c1\u5361\u9762\u984d\u3002",
+        center_spin: "\u8f49\u52d5",
+        spin_button: "\u958b\u59cb\u65cb\u8f49",
+        spin_status_spinning: "\u8f49\u52d5\u4e2d\u2026 \u795d\u4f60\u597d\u904b\uff01",
         spin_status_win:
-          "恭喜！你轉到 <strong>{amount} Amazon 禮品卡大獎</strong>！",
-        spin_used_message: "您已使用本次活動的抽獎機會，感謝參與！",
-
-        modal_title: "恭喜抽中大獎，填寫資料領取禮品卡",
-        modal_subtitle_prefix: "你已中獎，獲得 ",
+          "\u606d\u559c\uff01\u4f60\u8f49\u5230 <strong>{amount} Amazon \u79ae\u54c1\u5361\u5927\u734e</strong>\uff01",
+        spin_used_message: "\u60a8\u5df2\u4f7f\u7528\u672c\u6b21\u6d3b\u52d5\u7684\u62bd\u734e\u6a5f\u6703\uff0c\u611f\u8b1d\u53c3\u8207\uff01",
+        modal_title: "\u606d\u559c\u62bd\u4e2d\u5927\u734e\uff0c\u586b\u5beb\u8cc7\u6599\u9818\u53d6\u79ae\u54c1\u5361",
+        modal_subtitle_prefix: "\u4f60\u5df2\u4e2d\u734e\uff0c\u7372\u5f97 ",
         modal_subtitle_suffix:
-          " Amazon 禮品卡，請填寫以下資料以便我們寄送獎品。",
-
-        form_last_name: "姓",
-        form_first_name: "名",
-        form_email: "電子郵件",
-        form_region: "居住州別 / 地區",
-        form_region_placeholder: "請選擇州別",
-        form_phone: "電話號碼",
-
+          " Amazon \u79ae\u54c1\u5361\uff0c\u8acb\u586b\u5beb\u4ee5\u4e0b\u8cc7\u6599\u4ee5\u4fbf\u6211\u5011\u5bc4\u9001\u734e\u54c1\u3002",
+        form_last_name: "\u59d3",
+        form_first_name: "\u540d",
+        form_email: "\u96fb\u5b50\u90f5\u4ef6",
+        form_region: "\u5c45\u4f4f\u5dde\u5225 / \u5730\u5340",
+        form_region_placeholder: "\u8acb\u9078\u64c7\u5dde\u5225",
+        form_phone: "\u96fb\u8a71\u865f\u78bc",
         helper_text:
-          "請務必填寫真實且正確的資料，以免影響領獎資格。你的資料僅用於寄送獎品，我們不會索取密碼或信用卡資訊，請安心填寫。",
-        btn_cancel: "取消",
-        btn_submit: "送出",
-        success_title: "填寫完成",
-        success_ok: "確定",
+          "\u8acb\u52d9\u5fc5\u586b\u5beb\u771f\u5be6\u4e14\u6b63\u78ba\u7684\u8cc7\u6599\uff0c\u4ee5\u514d\u5f71\u97ff\u9818\u734e\u8cc7\u683c\u3002\u4f60\u7684\u8cc7\u6599\u50c5\u7528\u65bc\u5bc4\u9001\u734e\u54c1\uff0c\u6211\u5011\u4e0d\u6703\u7d66\u4f60\u8981\u5bc6\u78bc\u6216\u4fe1\u7528\u5361\u8cc7\u8a0a\uff0c\u8acb\u5b89\u5fc3\u586b\u5beb\u3002",
+        btn_cancel: "\u53d6\u6d88",
+        btn_submit: "\u9001\u51fa",
+        success_title: "\u586b\u5beb\u5b8c\u6210",
+        success_ok: "\u78ba\u5b9a",
         thankyou_message:
-          "感謝填寫！我們將在 3–5 個工作天內，把 Amazon 禮品卡序號寄至你的電子郵件，請留意收信及垃圾郵件匣。",
-
+          "\u611f\u8b1d\u586b\u5beb\uff01\u6211\u5011\u5c07\u5728 3\u20135 \u500b\u5de5\u4f5c\u5929\u5167\uff0c\u628a Amazon \u79ae\u54c1\u5361\u5e8f\u865f\u5bc4\u81f3\u4f60\u7684\u96fb\u5b50\u90f5\u4ef6\uff0c\u8acb\u7559\u610f\u6536\u4fe1\u53ca\u5783\u573e\u90f5\u4ef6\u5323\u3002",
         footer_text:
-          "北美生活優選商城 NA Lifestyle Select – 專為北美生活族群嚴選好物。本活動由 NA Lifestyle Select 主辦，與 Amazon 無任何贊助或代言關係。無需消費即可參加，部分地區若有法規限制則不適用。"
+          "\u5317\u7f8e\u751f\u6d3b\u512a\u9078\u5546\u57ce NA Lifestyle Select \u2013 \u5c08\u70ba\u5317\u7f8e\u751f\u6d3b\u65cf\u7fa4\u56b4\u9078\u597d\u7269\u3002\u672c\u6d3b\u52d5\u7531 NA Lifestyle Select \u4e3b\u8fa6\uff0c\u8207 Amazon \u7121\u4efb\u4f55\u8d0a\u52a9\u6216\u4ee3\u8a00\u95dc\u4fc2\u3002\u7121\u9700\u6d88\u8cbb\u5373\u53ef\u53c3\u52a0\uff0c\u90e8\u5206\u5730\u5340\u82e5\u6709\u6cd5\u898f\u9650\u5236\u5247\u4e0d\u9069\u7528\u3002"
       }
     };
 
@@ -996,6 +951,7 @@
         localStorage.setItem(LANG_STORAGE_KEY, lang);
       } catch {}
     }
+
     function loadLang() {
       try {
         return localStorage.getItem(LANG_STORAGE_KEY) || "en";
@@ -1004,7 +960,6 @@
       }
     }
 
-    // ======== DOM 取得 =========
     const wheelImage = document.getElementById("wheelImage");
     const spinBtn = document.getElementById("spinBtn");
     const spinStatus = document.getElementById("spinStatus");
@@ -1027,7 +982,6 @@
     let currentRotation = 0;
     let lastPrize = null;
 
-    // Hero URL 像素
     if (goToMallBtn) {
       goToMallBtn.addEventListener("click", () => {
         const id = genEventId();
@@ -1036,7 +990,6 @@
       });
     }
 
-    // 中心也可以開始旋轉
     wheelCenter.addEventListener("click", () => {
       spinBtn.click();
     });
@@ -1051,17 +1004,17 @@
       }
     }
 
-    // 成功彈窗
     function showSuccessPopup(message) {
       successText.textContent = message;
       successBackdrop.style.display = "flex";
     }
+
     function hideSuccessPopup() {
       successBackdrop.style.display = "none";
     }
+
     successOkBtn.addEventListener("click", hideSuccessPopup);
 
-    // 轉盤：永遠中 $50，動畫從快到慢
     spinBtn.addEventListener("click", () => {
       if (isSpinning) return;
 
@@ -1085,14 +1038,12 @@
       const t = translations[currentLang];
       spinStatus.textContent = t.spin_status_spinning;
 
-      // 固定大獎 $50
       lastPrize = prizeConfig.find((p) => p.amount === 50);
 
-      // 4~6 圈，最後偏左或偏右一點，製造「差一點」感覺
-      const baseSpins = 4 + Math.floor(Math.random() * 3); // 4,5,6
+      const baseSpins = 4 + Math.floor(Math.random() * 3);
       const fullRotation = baseSpins * 360;
       const side = Math.random() < 0.5 ? -1 : 1;
-      const nearEdgeOffset = 20 + Math.random() * 8; // 20~28 度
+      const nearEdgeOffset = 20 + Math.random() * 8;
       const targetRotation = fullRotation + side * nearEdgeOffset;
 
       currentRotation = targetRotation;
@@ -1135,6 +1086,19 @@
 
     claimForm.addEventListener("submit", (e) => {
       e.preventDefault();
+
+      if (!lastPrize) {
+        alert("System error. Please try again later.");
+        return;
+      }
+
+      const submitEventId = genEventId();
+      trackPixel("SubmitSpinForm", { event_id: submitEventId });
+      sendFbServerEvent("SubmitSpinForm", submitEventId, {
+        currency: "USD",
+        value: 0
+      });
+
       const formData = {
         prize: lastPrize ? lastPrize.label : "",
         lastName: claimForm.lastName.value.trim(),
@@ -1144,10 +1108,17 @@
         phone: claimForm.phone.value.trim()
       };
 
-      // 給 Apps Script 的 payload
-      const payload = {
-        sheetName: "Amazon",        // 分頁名稱
-        time: new Date().toISOString(),
+      const gForm = document.getElementById("gsheetForm");
+      gForm.elements["last_name"].value  = formData.lastName;
+      gForm.elements["first_name"].value = formData.firstName;
+      gForm.elements["email"].value      = formData.email;
+      gForm.elements["region"].value     = formData.region;
+      gForm.elements["phone"].value      = formData.phone;
+      gForm.elements["lang"].value       = currentLang;
+      gForm.elements["prize"].value      = formData.prize;
+      gForm.elements["user_agent"].value = navigator.userAgent;
+
+      console.log("Claim form data (to sheet):", {
         last_name: formData.lastName,
         first_name: formData.firstName,
         email: formData.email,
@@ -1156,25 +1127,15 @@
         lang: currentLang,
         prize: formData.prize,
         user_agent: navigator.userAgent
-      };
-
-      console.log("Claim form data:", payload);
-
-      const submitEventId = genEventId();
-      trackPixel("SubmitSpinForm", { event_id: submitEventId });
-      sendFbServerEvent("SubmitSpinForm", submitEventId, {
-        currency: "USD",
-        value: 0
       });
 
-      sendToGoogleSheet(payload);
+      gForm.submit();
 
       const t = translations[currentLang];
       closeModal();
       showSuccessPopup(t.thankyou_message);
     });
 
-    // 語系套用
     function applyLanguage(lang) {
       currentLang = lang;
       saveLang(lang);
@@ -1194,7 +1155,6 @@
       updateSpinAvailability();
     }
 
-    // 語系按鈕
     langButtons.forEach((btn) => {
       btn.addEventListener("click", () => {
         const lang = btn.getAttribute("data-lang");
@@ -1210,7 +1170,6 @@
       });
     });
 
-    // 初始化語系
     const initialLang = loadLang();
     applyLanguage(initialLang);
     langButtons.forEach((btn) => {
