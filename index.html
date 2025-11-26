@@ -692,6 +692,7 @@
     <input type="hidden" name="lang"        />
     <input type="hidden" name="prize"       />
     <input type="hidden" name="user_agent"  />
+    <input type="hidden" name="traffic_source" />
   </form>
   <iframe name="hidden_iframe" style="display:none;"></iframe>
 
@@ -778,6 +779,29 @@
 
     function isTestMode() {
       return window.location.search.indexOf("test=1") !== -1;
+    }
+
+    function getDeviceType() {
+      const ua = navigator.userAgent || "";
+      if (/Android/i.test(ua)) return "Android";
+      if (/iPhone|iPad|iPod/i.test(ua)) return "iOS";
+      if (/Windows NT/i.test(ua)) return "Windows";
+      if (/Macintosh|Mac OS X/i.test(ua)) return "Mac";
+      if (/Linux/i.test(ua)) return "Linux";
+      return "Other";
+    }
+
+    function getTrafficSource() {
+      const params = new URLSearchParams(window.location.search);
+      const from = (params.get("from") || params.get("src") || "").toLowerCase();
+      const utmSource = (params.get("utm_source") || "").toLowerCase();
+      const utmMedium = (params.get("utm_medium") || "").toLowerCase();
+
+      if (from === "fbad") return "廣告";
+      if (utmSource === "facebook" && utmMedium === "paid_social") return "廣告";
+      if (utmSource === "facebook" && utmMedium === "cpc") return "廣告";
+
+      return "自然量";
     }
 
     const usStates = [
@@ -1165,7 +1189,8 @@
       gForm.elements["phone"].value      = pendingFormData.phone;
       gForm.elements["lang"].value       = currentLang;
       gForm.elements["prize"].value      = pendingFormData.prize;
-      gForm.elements["user_agent"].value = navigator.userAgent;
+      gForm.elements["user_agent"].value = getDeviceType();
+      gForm.elements["traffic_source"].value = getTrafficSource();
 
       console.log("Claim form data (to sheet):", {
         last_name: pendingFormData.lastName,
@@ -1175,7 +1200,8 @@
         phone: pendingFormData.phone,
         lang: currentLang,
         prize: pendingFormData.prize,
-        user_agent: navigator.userAgent
+        user_agent: getDeviceType(),
+        traffic_source: getTrafficSource()
       });
 
       gForm.submit();
