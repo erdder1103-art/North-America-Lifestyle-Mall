@@ -534,6 +534,17 @@
       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.3);
       transform: translateY(-1px);
     }
+
+    .confirm-backdrop {
+      position: fixed;
+      inset: 0;
+      background-color: rgba(0, 0, 0, 0.55);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 55;
+      padding: 16px;
+    }
   </style>
 </head>
 <body>
@@ -642,6 +653,17 @@
           <button type="submit" class="btn-primary" data-i18n="btn_submit"></button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <div class="confirm-backdrop" id="confirmBackdrop">
+    <div class="modal">
+      <h3 class="modal-title">資料確認提醒</h3>
+      <p class="modal-subtitle">請務必填寫本人真實資料，如經查證不符，可能取消領取資格。</p>
+      <div class="modal-actions">
+        <button type="button" class="btn-secondary" id="confirmEditBtn">重新填寫</button>
+        <button type="button" class="btn-primary" id="confirmOkBtn">確認是本人資料</button>
+      </div>
     </div>
   </div>
 
@@ -890,56 +912,56 @@
           "NA Lifestyle Select \u2013 North America lifestyle marketplace. This promotion is organized by NA Lifestyle Select and is not sponsored or endorsed by Amazon. No purchase necessary; void where prohibited."
       },
       zh: {
-        hero_badge: "\u9650\u6642\u6d3b\u52d5 \u2022 \u65b0\u5ba2\u6b61\u8fce\u79ae",
-        hero_title: "\u5317\u7f8e\u751f\u6d3b\u512a\u9078\u5546\u57ce \uffb7 \u8f49\u8f49\u6a02\u62bd Amazon \u79ae\u54c1\u5361\uff0c\u6700\u9ad8 $50",
+        hero_badge: "限時活動 • 新客歡迎禮",
+        hero_title: "北美生活優選商城 · 轉轉樂抽 Amazon 禮品卡，最高 $50",
         hero_subtitle:
-          "\u300c\u5317\u7f8e\u751f\u6d3b\u512a\u9078\u5546\u57ce\u300d\uff08NA Lifestyle Select\uff09\u662f\u5c08\u70ba\u5728\u5317\u7f8e\u751f\u6d3b\u7684\u4eba\uff0c\u56b4\u9078\u65e5\u5e38\u7528\u54c1\u8207\u751f\u6d3b\u597d\u7269\u7684\u7dda\u4e0a\u5546\u57ce\u3002\u73fe\u5728\u8209\u8fa6\u65b0\u5ba2\u6b61\u8fce\u6d3b\u52d5\uff0c\u53ea\u8981\u53c3\u52a0\u8f49\u76e4\uff0c\u5c31\u6709\u6a5f\u6703\u7372\u5f97 $5 / $10 / $20 / $35 / $40 / $50 Amazon Gift Card\u3002",
-        hero_button: "\u524d\u5f80\u5317\u7f8e\u751f\u6d3b\u8cfc\u7269\u7db2",
+          "「北美生活優選商城」（NA Lifestyle Select）是專為在北美生活的人，嚴選日常用品與生活好物的線上商城。現在舉辦新客歡迎活動，只要參加轉盤，就有機會獲得 $5 / $10 / $20 / $35 / $40 / $50 Amazon Gift Card。",
+        hero_button: "前往北美生活購物網",
         hero_note:
-          "\u7121\u9700\u6d88\u8cbb\u5373\u53ef\u53c3\u52a0\u3002\u672c\u6d3b\u52d5\u7531\u300c\u5317\u7f8e\u751f\u6d3b\u512a\u9078\u5546\u57ce NA Lifestyle Select\u300d\u8209\u8fa6\uff0c\u8207 Amazon \u7121\u4efb\u4f55\u8d0a\u52a9\u6216\u4ee3\u8a00\u95dc\u4fc2\u3002",
-        card_left_title: "\u6d3b\u52d5\u8207\u5546\u57ce\u4ecb\u7d39",
+          "無需消費即可參加。本活動由「北美生活優選商城 NA Lifestyle Select」舉辦，與 Amazon 無任何贊助或代言關係。",
+        card_left_title: "活動與商城介紹",
         card_left_subtitle:
-          "\u6211\u5011\u5e0c\u671b\u66f4\u591a\u751f\u6d3b\u5728\u5317\u7f8e\u7684\u6d88\u8cbb\u8005\u8a8d\u8b58\u300c\u5317\u7f8e\u751f\u6d3b\u512a\u9078\u5546\u57ce\u3002\u56e0\u6b64\u900f\u904e\u8d08\u9001 Amazon \u79ae\u54c1\u5361\u7684\u65b9\u5f0f\uff0c\u8b93\u4f60\u5c31\u7b97\u5c1a\u672a\u5728\u6211\u5011\u5546\u57ce\u8cfc\u7269\uff0c\u4e5f\u80fd\u5148\u7372\u5f97\u4e00\u4efd\u5be6\u7528\u7684\u734e\u52f5\uff0c\u76f4\u63a5\u5728 Amazon \u4f7f\u7528\u3002",
+          "我們希望更多生活在北美的消費者認識「北美生活優選商城」。因此透過贈送 Amazon 禮品卡的方式，讓你就算尚未在我們商城購物，也能先獲得一份實用的獎勵，直接在 Amazon 使用。",
         card_left_list1:
-          "<strong>\u734e\u9805\u5167\u5bb9\uff1a</strong>100% \u6709 Amazon \u79ae\u54c1\u5361\uff0c\u4e2d\u734e\u91d1\u984d\u70ba $5 / $10 / $20 / $35 / $40 / $50\u3002",
+          "<strong>獎項內容：</strong>100% 有 Amazon 禮品卡，中獎金額為 $5 / $10 / $20 / $35 / $40 / $50。",
         card_left_list2:
-          "<strong>\u62bd\u734e\u6b21\u6578\uff1a</strong>\u6bcf\u4eba\u9650\u5b9a\u53c3\u8207\u62bd\u734e\u4e00\u6b21\u3002",
+          "<strong>抽獎次數：</strong>每人限定參與抽獎一次。",
         card_left_list3:
-          "<strong>\u734e\u54c1\u5bc4\u9001\uff1a</strong>\u4e2d\u734e\u8005\u586b\u5beb\u8cc7\u6599\u4e26\u78ba\u8a8d\u5f8c\uff0c\u6211\u5011\u6703\u5c07\u79ae\u54c1\u5361\u5e8f\u865f\u4ee5 Email \u5bc4\u9001\u7d66\u4f60\u3002",
-        why_title: "\u70ba\u4ec0\u9ebc\u9078\u64c7\u9001 Amazon \u79ae\u54c1\u5361\uff1f",
+          "<strong>獎品寄送：</strong>中獎者填寫資料並確認後，我們會將禮品卡序號以 Email 寄送給你。",
+        why_title: "為什麼選擇送 Amazon 禮品卡？",
         why_text1:
-          "Amazon \u662f\u7f8e\u570b\u6700\u5e38\u88ab\u4f7f\u7528\u7684\u7dda\u4e0a\u8cfc\u7269\u7db2\u7ad9\uff0c\u5e7e\u4e4e\u4eba\u4eba\u90fd\u6709\u5e33\u865f\u3002\u9078\u64c7 Amazon \u79ae\u54c1\u5361\u7576\u734e\u54c1\uff0c\u662f\u5e0c\u671b\u734e\u52f5\u80fd\u5728\u5317\u7f8e\u5404\u5730\u90fd\u65b9\u4fbf\u4f7f\u7528\uff0c\u800c\u4e0d\u662f\u53ea\u80fd\u9650\u5b9a\u5728\u6211\u5011\u81ea\u5df1\u7684\u5546\u57ce\u3002",
+          "Amazon 是美國最常被使用的線上購物網站，幾乎人人都有帳號。選擇 Amazon 禮品卡當獎品，是希望獎勵能在北美各地都方便使用，而不是只能限定在我們自己的商城。",
         why_text2:
-          "\u9019\u500b\u6d3b\u52d5\u53ea\u662f\u60f3\u7528\u4e00\u500b\u8f15\u9b06\u7684\u65b9\u5f0f\uff0c\u8b93\u66f4\u591a\u5728\u5317\u7f8e\u751f\u6d3b\u7684\u4f60\u8a8d\u8b58\u300c\u5317\u7f8e\u751f\u6d3b\u512a\u9078\u5546\u57ce\u3002\u4f60\u53ef\u4ee5\u5148\u73a9\u8f49\u76e4\u62ff\u734e\u54c1\uff0c\u518d\u6c7a\u5b9a\u672a\u4f86\u662f\u5426\u5230\u5546\u57ce\u901b\u901b\u3001\u770b\u770b\u6709\u6c92\u6709\u9069\u5408\u4f60\u751f\u6d3b\u9700\u6c42\u7684\u5546\u54c1\u3002",
-        wheel_title: "Amazon \u79ae\u54c1\u5361\u5e78\u904b\u8f49\u76e4",
+          "這個活動只是想用一個輕鬆的方式，讓更多在北美生活的你認識「北美生活優選商城」。你可以先玩轉盤拿獎品，再決定未來是否到商城逛逛、看看有沒有適合你生活需求的商品。",
+        wheel_title: "Amazon 禮品卡幸運轉盤",
         wheel_subtitle:
-          "\u9ede\u64ca\u300c\u958b\u59cb\u65cb\u8f49\u300d\uff0c\u7b49\u5f85\u8f49\u76e4\u505c\u6b62\uff0c\u4e0a\u65b9\u6307\u91dd\u6307\u5230\u7684\u91d1\u984d\u5c31\u662f\u4f60\u7372\u5f97\u7684 Amazon \u79ae\u54c1\u5361\u9762\u984d\u3002",
-        center_spin: "\u8f49\u52d5",
-        spin_button: "\u958b\u59cb\u65cb\u8f49",
-        spin_status_spinning: "\u8f49\u52d5\u4e2d\u2026 \u795d\u4f60\u597d\u904b\uff01",
+          "點擊「開始旋轉」，等待轉盤停止，上方指針指到的金額就是你獲得的 Amazon 禮品卡面額。",
+        center_spin: "轉動",
+        spin_button: "開始旋轉",
+        spin_status_spinning: "轉動中… 祝你好運！",
         spin_status_win:
-          "\u606d\u559c\uff01\u4f60\u8f49\u5230 <strong>{amount} Amazon \u79ae\u54c1\u5361\u5927\u734e</strong>\uff01",
-        spin_used_message: "\u60a8\u5df2\u4f7f\u7528\u672c\u6b21\u6d3b\u52d5\u7684\u62bd\u734e\u6a5f\u6703\uff0c\u611f\u8b1d\u53c3\u8207\uff01",
-        modal_title: "\u606d\u559c\u62bd\u4e2d\u5927\u734e\uff0c\u586b\u5beb\u8cc7\u6599\u9818\u53d6\u79ae\u54c1\u5361",
-        modal_subtitle_prefix: "\u4f60\u5df2\u4e2d\u734e\uff0c\u7372\u5f97 ",
+          "恭喜！你轉到 <strong>{amount} Amazon 禮品卡大獎</strong>！",
+        spin_used_message: "您已使用本次活動的抽獎機會，感謝參與！",
+        modal_title: "恭喜抽中大獎，填寫資料領取禮品卡",
+        modal_subtitle_prefix: "你已中獎，獲得 ",
         modal_subtitle_suffix:
-          " Amazon \u79ae\u54c1\u5361\uff0c\u8acb\u586b\u5beb\u4ee5\u4e0b\u8cc7\u6599\u4ee5\u4fbf\u6211\u5011\u5bc4\u9001\u734e\u54c1\u3002",
-        form_last_name: "\u59d3",
-        form_first_name: "\u540d",
-        form_email: "\u96fb\u5b50\u90f5\u4ef6",
-        form_region: "\u5c45\u4f4f\u5dde\u5225 / \u5730\u5340",
-        form_region_placeholder: "\u8acb\u9078\u64c7\u5dde\u5225",
-        form_phone: "\u96fb\u8a71\u865f\u78bc",
+          " Amazon 禮品卡，請填寫以下資料以便我們寄送獎品。",
+        form_last_name: "姓",
+        form_first_name: "名",
+        form_email: "電子郵件",
+        form_region: "居住州別 / 地區",
+        form_region_placeholder: "請選擇州別",
+        form_phone: "電話號碼",
         helper_text:
-          "\u8acb\u52d9\u5fc5\u586b\u5beb\u771f\u5be6\u4e14\u6b63\u78ba\u7684\u8cc7\u6599\uff0c\u4ee5\u514d\u5f71\u97ff\u9818\u734e\u8cc7\u683c\u3002\u4f60\u7684\u8cc7\u6599\u50c5\u7528\u65bc\u5bc4\u9001\u734e\u54c1\uff0c\u6211\u5011\u4e0d\u6703\u7d66\u4f60\u8981\u5bc6\u78bc\u6216\u4fe1\u7528\u5361\u8cc7\u8a0a\uff0c\u8acb\u5b89\u5fc3\u586b\u5beb\u3002",
-        btn_cancel: "\u53d6\u6d88",
-        btn_submit: "\u9001\u51fa",
-        success_title: "\u586b\u5beb\u5b8c\u6210",
-        success_ok: "\u78ba\u5b9a",
+          "請務必填寫真實且正確的資料，以免影響領獎資格。你的資料僅用於寄送獎品，我們不會向你索取密碼或信用卡資訊，請安心填寫。",
+        btn_cancel: "取消",
+        btn_submit: "送出",
+        success_title: "填寫完成",
+        success_ok: "確定",
         thankyou_message:
-          "\u611f\u8b1d\u586b\u5beb\uff01\u6211\u5011\u5c07\u5728 3\u20135 \u500b\u5de5\u4f5c\u5929\u5167\uff0c\u628a Amazon \u79ae\u54c1\u5361\u5e8f\u865f\u5bc4\u81f3\u4f60\u7684\u96fb\u5b50\u90f5\u4ef6\uff0c\u8acb\u7559\u610f\u6536\u4fe1\u53ca\u5783\u573e\u90f5\u4ef6\u5323\u3002",
+          "感謝填寫！我們將在 3–5 個工作天內，把 Amazon 禮品卡序號寄至你的電子郵件，請留意收信及垃圾郵件匣。",
         footer_text:
-          "\u5317\u7f8e\u751f\u6d3b\u512a\u9078\u5546\u57ce NA Lifestyle Select \u2013 \u5c08\u70ba\u5317\u7f8e\u751f\u6d3b\u65cf\u7fa4\u56b4\u9078\u597d\u7269\u3002\u672c\u6d3b\u52d5\u7531 NA Lifestyle Select \u4e3b\u8fa6\uff0c\u8207 Amazon \u7121\u4efb\u4f55\u8d0a\u52a9\u6216\u4ee3\u8a00\u95dc\u4fc2\u3002\u7121\u9700\u6d88\u8cbb\u5373\u53ef\u53c3\u52a0\uff0c\u90e8\u5206\u5730\u5340\u82e5\u6709\u6cd5\u898f\u9650\u5236\u5247\u4e0d\u9069\u7528\u3002"
+          "北美生活優選商城 NA Lifestyle Select – 專為北美生活族群嚴選好物。本活動由 NA Lifestyle Select 主辦，與 Amazon 無任何贊助或代言關係。無需消費即可參加，部分地區若有法規限制則不適用。"
       }
     };
 
@@ -972,6 +994,10 @@
     const modalPrizeText = document.getElementById("modalPrizeText");
     const claimForm = document.getElementById("claimForm");
 
+    const confirmBackdrop = document.getElementById("confirmBackdrop");
+    const confirmEditBtn = document.getElementById("confirmEditBtn");
+    const confirmOkBtn = document.getElementById("confirmOkBtn");
+
     const successBackdrop = document.getElementById("successBackdrop");
     const successText = document.getElementById("successText");
     const successOkBtn = document.getElementById("successOkBtn");
@@ -981,6 +1007,8 @@
     let isSpinning = false;
     let currentRotation = 0;
     let lastPrize = null;
+    let pendingFormData = null;
+    let pendingSubmitEventId = null;
 
     if (goToMallBtn) {
       goToMallBtn.addEventListener("click", () => {
@@ -1092,48 +1120,72 @@
         return;
       }
 
-      const submitEventId = genEventId();
+      pendingSubmitEventId = genEventId();
+
+      const regionSelect = claimForm.region;
+      const regionText =
+        regionSelect.options[regionSelect.selectedIndex].text.trim();
+
+      pendingFormData = {
+        prize: lastPrize ? lastPrize.label : "",
+        lastName: claimForm.lastName.value.trim(),
+        firstName: claimForm.firstName.value.trim(),
+        email: claimForm.email.value.trim(),
+        region: regionText,
+        phone: claimForm.phone.value.trim()
+      };
+
+      confirmBackdrop.style.display = "flex";
+    });
+
+    confirmEditBtn.addEventListener("click", () => {
+      pendingFormData = null;
+      pendingSubmitEventId = null;
+      confirmBackdrop.style.display = "none";
+    });
+
+    confirmOkBtn.addEventListener("click", () => {
+      if (!pendingFormData || !lastPrize) {
+        confirmBackdrop.style.display = "none";
+        return;
+      }
+
+      const submitEventId = pendingSubmitEventId || genEventId();
       trackPixel("SubmitSpinForm", { event_id: submitEventId });
       sendFbServerEvent("SubmitSpinForm", submitEventId, {
         currency: "USD",
         value: 0
       });
 
-      const formData = {
-        prize: lastPrize ? lastPrize.label : "",
-        lastName: claimForm.lastName.value.trim(),
-        firstName: claimForm.firstName.value.trim(),
-        email: claimForm.email.value.trim(),
-        region: claimForm.region.value,
-        phone: claimForm.phone.value.trim()
-      };
-
       const gForm = document.getElementById("gsheetForm");
-      gForm.elements["last_name"].value  = formData.lastName;
-      gForm.elements["first_name"].value = formData.firstName;
-      gForm.elements["email"].value      = formData.email;
-      gForm.elements["region"].value     = formData.region;
-      gForm.elements["phone"].value      = formData.phone;
+      gForm.elements["last_name"].value  = pendingFormData.lastName;
+      gForm.elements["first_name"].value = pendingFormData.firstName;
+      gForm.elements["email"].value      = pendingFormData.email;
+      gForm.elements["region"].value     = pendingFormData.region;
+      gForm.elements["phone"].value      = pendingFormData.phone;
       gForm.elements["lang"].value       = currentLang;
-      gForm.elements["prize"].value      = formData.prize;
+      gForm.elements["prize"].value      = pendingFormData.prize;
       gForm.elements["user_agent"].value = navigator.userAgent;
 
       console.log("Claim form data (to sheet):", {
-        last_name: formData.lastName,
-        first_name: formData.firstName,
-        email: formData.email,
-        region: formData.region,
-        phone: formData.phone,
+        last_name: pendingFormData.lastName,
+        first_name: pendingFormData.firstName,
+        email: pendingFormData.email,
+        region: pendingFormData.region,
+        phone: pendingFormData.phone,
         lang: currentLang,
-        prize: formData.prize,
+        prize: pendingFormData.prize,
         user_agent: navigator.userAgent
       });
 
       gForm.submit();
 
       const t = translations[currentLang];
+      confirmBackdrop.style.display = "none";
       closeModal();
       showSuccessPopup(t.thankyou_message);
+      pendingFormData = null;
+      pendingSubmitEventId = null;
     });
 
     function applyLanguage(lang) {
