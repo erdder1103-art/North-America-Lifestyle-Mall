@@ -5,6 +5,7 @@
   <title>NA Lifestyle Select – Amazon Gift Card Lucky Spin</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
+  <!-- Facebook Pixel -->
   <script>
     !function(f,b,e,v,n,t,s){
       if(f.fbq)return;n=f.fbq=function(){n.callMethod?
@@ -32,9 +33,7 @@
         "Helvetica Neue", Arial, "Noto Sans TC", sans-serif;
     }
 
-    body.modal-open {
-      overflow: hidden;
-    }
+    body.modal-open { overflow: hidden; }
 
     body {
       background-color: #f3f3f3;
@@ -67,9 +66,7 @@
       display: block;
     }
 
-    .logo-img.logo2 {
-      height: 84px;
-    }
+    .logo-img.logo2 { height: 84px; }
 
     .lang-switch {
       display: flex;
@@ -93,9 +90,7 @@
       opacity: 1;
     }
 
-    .lang-btn:hover {
-      opacity: 1;
-    }
+    .lang-btn:hover { opacity: 1; }
 
     .hero {
       background: linear-gradient(90deg, #febd69, #ffd194);
@@ -106,9 +101,7 @@
       text-align: center;
     }
 
-    .hero-inner {
-      max-width: 900px;
-    }
+    .hero-inner { max-width: 900px; }
 
     .hero-title {
       font-size: 26px;
@@ -131,24 +124,6 @@
       margin-bottom: 10px;
     }
 
-    .hero-button {
-      display: inline-block;
-      background-color: #ffd814;
-      border: 1px solid #fcd200;
-      padding: 10px 24px;
-      border-radius: 20px;
-      font-size: 16px;
-      font-weight: 600;
-      cursor: pointer;
-      transition: transform 0.1s, box-shadow 0.1s, background-color 0.1s;
-    }
-
-    .hero-button:hover {
-      background-color: #f7ca00;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-      transform: translateY(-1px);
-    }
-
     .hero-note {
       font-size: 12px;
       margin-top: 8px;
@@ -165,9 +140,7 @@
     }
 
     @media (max-width: 900px) {
-      .content {
-        grid-template-columns: minmax(0, 1fr);
-      }
+      .content { grid-template-columns: minmax(0, 1fr); }
     }
 
     .card {
@@ -202,9 +175,7 @@
       margin-bottom: 4px;
     }
 
-    ul.bullet li + li {
-      margin-top: 4px;
-    }
+    ul.bullet li + li { margin-top: 4px; }
 
     .info-block {
       margin-top: 16px;
@@ -335,9 +306,7 @@
       color: #333;
     }
 
-    .spin-status strong {
-      color: #b12704;
-    }
+    .spin-status strong { color: #b12704; }
 
     .modal-backdrop {
       position: fixed;
@@ -371,9 +340,7 @@
       opacity: 0.6;
     }
 
-    .modal-close:hover {
-      opacity: 1;
-    }
+    .modal-close:hover { opacity: 1; }
 
     .modal-title {
       font-size: 18px;
@@ -450,9 +417,7 @@
       font-weight: 600;
     }
 
-    .btn-primary:hover {
-      background-color: #f7ca00;
-    }
+    .btn-primary:hover { background-color: #f7ca00; }
 
     .helper-text {
       font-size: 11px;
@@ -609,6 +574,7 @@
     </section>
   </main>
 
+  <!-- 資料填寫 Modal -->
   <div class="modal-backdrop" id="modalBackdrop">
     <div class="modal">
       <div class="modal-close" id="modalCloseBtn">&times;</div>
@@ -656,6 +622,7 @@
     </div>
   </div>
 
+  <!-- 資料確認 Modal -->
   <div class="confirm-backdrop" id="confirmBackdrop">
     <div class="modal">
       <h3 class="modal-title">資料確認提醒</h3>
@@ -667,6 +634,7 @@
     </div>
   </div>
 
+  <!-- 成功提示 Modal -->
   <div class="success-backdrop" id="successBackdrop">
     <div class="success-modal">
       <div class="success-icon">✓</div>
@@ -678,11 +646,12 @@
 
   <footer class="footer" data-i18n="footer_text"></footer>
 
+  <!-- 傳到 Apps Script 的隱藏表單 -->
   <form id="gsheetForm"
-      action="https://script.google.com/macros/s/AKfycby5DI7oZ9GBK1h6WFg1uHcXYu2FUVs6pPDog4O-DLA23E3mgMwGg44H1molgjQMJxtozA/exec"
-      method="POST"
-      target="hidden_iframe"
-      style="display:none;">
+        action="https://script.google.com/macros/s/AKfycby5DI7oZ9GBK1h6WFg1uHcXYu2FUVs6pPDog4O-DLA23E3mgMwGg44H1molgjQMJxtozA/exec"
+        method="POST"
+        target="hidden_iframe"
+        style="display:none;">
     <input type="hidden" name="sheetName"   value="Amazon" />
     <input type="hidden" name="last_name"   />
     <input type="hidden" name="first_name"  />
@@ -691,14 +660,15 @@
     <input type="hidden" name="phone"       />
     <input type="hidden" name="lang"        />
     <input type="hidden" name="prize"       />
-    <input type="hidden" name="user_agent"  />
     <input type="hidden" name="traffic_source" />
+    <input type="hidden" name="user_agent"  />
   </form>
   <iframe name="hidden_iframe" style="display:none;"></iframe>
 
   <script>
+    /* ========= 抽獎設定 ========= */
     const prizeConfig = [
-      { label: "$5", amount: 5, weight: 40 },
+      { label: "$5",  amount: 5,  weight: 40 },
       { label: "$10", amount: 10, weight: 25 },
       { label: "$20", amount: 20, weight: 15 },
       { label: "$35", amount: 35, weight: 10 },
@@ -706,6 +676,7 @@
       { label: "$50", amount: 50, weight: 3 }
     ];
 
+    /* ========= Pixel / CAPI ========= */
     function trackPixel(eventName, params) {
       try {
         if (typeof fbq === "function") {
@@ -734,16 +705,14 @@
           encodeURIComponent(FB_CAPI_ACCESS_TOKEN);
 
         const payload = {
-          data: [
-            {
-              event_name: eventName,
-              event_time: Math.floor(Date.now() / 1000),
-              event_id: eventId,
-              action_source: "website",
-              event_source_url: window.location.href,
-              custom_data: customData || {}
-            }
-          ]
+          data: [{
+            event_name: eventName,
+            event_time: Math.floor(Date.now() / 1000),
+            event_id: eventId,
+            action_source: "website",
+            event_source_url: window.location.href,
+            custom_data: customData || {}
+          }]
         };
 
         fetch(url, {
@@ -761,36 +730,24 @@
       return "evt_" + Date.now() + "_" + Math.random().toString(16).slice(2);
     }
 
+    /* ========= 抽一次限制 ========= */
     const SPIN_STORAGE_KEY = "lifamall_spin_used";
 
     function hasSpun() {
       try {
         return localStorage.getItem(SPIN_STORAGE_KEY) === "1";
-      } catch {
-        return false;
-      }
+      } catch { return false; }
     }
 
     function markSpun() {
-      try {
-        localStorage.setItem(SPIN_STORAGE_KEY, "1");
-      } catch {}
+      try { localStorage.setItem(SPIN_STORAGE_KEY, "1"); } catch {}
     }
 
     function isTestMode() {
       return window.location.search.indexOf("test=1") !== -1;
     }
 
-    function getDeviceType() {
-      const ua = navigator.userAgent || "";
-      if (/Android/i.test(ua)) return "Android";
-      if (/iPhone|iPad|iPod/i.test(ua)) return "iOS";
-      if (/Windows NT/i.test(ua)) return "Windows";
-      if (/Macintosh|Mac OS X/i.test(ua)) return "Mac";
-      if (/Linux/i.test(ua)) return "Linux";
-      return "Other";
-    }
-
+    /* ========= 來源 / 裝置偵測 ========= */
     function getTrafficSource() {
       const params = new URLSearchParams(window.location.search);
       const from = (params.get("from") || params.get("src") || "").toLowerCase();
@@ -804,6 +761,17 @@
       return "自然量";
     }
 
+    function getDeviceType() {
+      const ua = navigator.userAgent || "";
+      if (/Android/i.test(ua)) return "Android";
+      if (/iPhone|iPad|iPod/i.test(ua)) return "iOS";
+      if (/Windows NT/i.test(ua)) return "Windows";
+      if (/Macintosh|Mac OS X/i.test(ua)) return "Mac";
+      if (/Linux/i.test(ua)) return "Linux";
+      return "Other";
+    }
+
+    /* ========= 州別清單 ========= */
     const usStates = [
       { value: "AL", en: "Alabama", zh: "阿拉巴馬州" },
       { value: "AK", en: "Alaska", zh: "阿拉斯加州" },
@@ -880,6 +848,7 @@
       });
     }
 
+    /* ========= 文案 ========= */
     const translations = {
       en: {
         hero_badge: "Welcome Event \u2022 New Shoppers",
@@ -887,7 +856,6 @@
           "Discover North America Lifestyle Deals \u2013 Win Amazon Gift Cards up to $50",
         hero_subtitle:
           "NA Lifestyle Select is an online marketplace for everyday essentials curated for people living in North America. As a welcome event, you can spin the wheel for a chance to win Amazon Gift Cards worth $5, $10, $20, $35, $40 or $50.",
-        hero_button: "Visit NA Lifestyle Mall",
         hero_note:
           "No purchase necessary. This promotion is hosted by NA Lifestyle Select and is not sponsored or endorsed by Amazon.",
         card_left_title: "About Our Welcome Event",
@@ -940,7 +908,6 @@
         hero_title: "北美生活優選商城 · 轉轉樂抽 Amazon 禮品卡，最高 $50",
         hero_subtitle:
           "「北美生活優選商城」（NA Lifestyle Select）是專為在北美生活的人，嚴選日常用品與生活好物的線上商城。現在舉辦新客歡迎活動，只要參加轉盤，就有機會獲得 $5 / $10 / $20 / $35 / $40 / $50 Amazon Gift Card。",
-        hero_button: "前往北美生活購物網",
         hero_note:
           "無需消費即可參加。本活動由「北美生活優選商城 NA Lifestyle Select」舉辦，與 Amazon 無任何贊助或代言關係。",
         card_left_title: "活動與商城介紹",
@@ -993,38 +960,33 @@
     const LANG_STORAGE_KEY = "lifamall_lang";
 
     function saveLang(lang) {
-      try {
-        localStorage.setItem(LANG_STORAGE_KEY, lang);
-      } catch {}
+      try { localStorage.setItem(LANG_STORAGE_KEY, lang); } catch {}
     }
 
     function loadLang() {
       try {
         return localStorage.getItem(LANG_STORAGE_KEY) || "en";
-      } catch {
-        return "en";
-      }
+      } catch { return "en"; }
     }
 
-    const wheelImage = document.getElementById("wheelImage");
-    const spinBtn = document.getElementById("spinBtn");
-    const spinStatus = document.getElementById("spinStatus");
-    const wheelCenter = document.getElementById("wheelCenter");
-    const goToMallBtn = document.getElementById("goToMallBtn");
-
-    const modalBackdrop = document.getElementById("modalBackdrop");
-    const modalCloseBtn = document.getElementById("modalCloseBtn");
-    const cancelBtn = document.getElementById("cancelBtn");
+    /* ========= DOM 取得 ========= */
+    const wheelImage     = document.getElementById("wheelImage");
+    const spinBtn        = document.getElementById("spinBtn");
+    const spinStatus     = document.getElementById("spinStatus");
+    const wheelCenter    = document.getElementById("wheelCenter");
+    const modalBackdrop  = document.getElementById("modalBackdrop");
+    const modalCloseBtn  = document.getElementById("modalCloseBtn");
+    const cancelBtn      = document.getElementById("cancelBtn");
     const modalPrizeText = document.getElementById("modalPrizeText");
-    const claimForm = document.getElementById("claimForm");
+    const claimForm      = document.getElementById("claimForm");
 
     const confirmBackdrop = document.getElementById("confirmBackdrop");
-    const confirmEditBtn = document.getElementById("confirmEditBtn");
-    const confirmOkBtn = document.getElementById("confirmOkBtn");
+    const confirmEditBtn  = document.getElementById("confirmEditBtn");
+    const confirmOkBtn    = document.getElementById("confirmOkBtn");
 
     const successBackdrop = document.getElementById("successBackdrop");
-    const successText = document.getElementById("successText");
-    const successOkBtn = document.getElementById("successOkBtn");
+    const successText     = document.getElementById("successText");
+    const successOkBtn    = document.getElementById("successOkBtn");
 
     const langButtons = document.querySelectorAll(".lang-btn");
 
@@ -1034,18 +996,7 @@
     let pendingFormData = null;
     let pendingSubmitEventId = null;
 
-    if (goToMallBtn) {
-      goToMallBtn.addEventListener("click", () => {
-        const id = genEventId();
-        trackPixel("ClickMallURL", { event_id: id });
-        sendFbServerEvent("ClickMallURL", id, {});
-      });
-    }
-
-    wheelCenter.addEventListener("click", () => {
-      spinBtn.click();
-    });
-
+    /* ========= 語系切換 ========= */
     function updateSpinAvailability() {
       const t = translations[currentLang];
       if (!isTestMode() && hasSpun()) {
@@ -1056,170 +1007,11 @@
       }
     }
 
-    function showSuccessPopup(message) {
-      successText.textContent = message;
-      successBackdrop.style.display = "flex";
-    }
-
-    function hideSuccessPopup() {
-      successBackdrop.style.display = "none";
-    }
-
-    successOkBtn.addEventListener("click", hideSuccessPopup);
-
-    spinBtn.addEventListener("click", () => {
-      if (isSpinning) return;
-
-      if (!isTestMode() && hasSpun()) {
-        const t = translations[currentLang];
-        spinStatus.innerHTML = t.spin_used_message;
-        return;
-      }
-
-      if (!isTestMode()) {
-        markSpun();
-      }
-
-      const spinEventId = genEventId();
-      trackPixel("StartSpin", { event_id: spinEventId });
-      sendFbServerEvent("StartSpin", spinEventId, {});
-
-      isSpinning = true;
-      spinBtn.disabled = true;
-
-      const t = translations[currentLang];
-      spinStatus.textContent = t.spin_status_spinning;
-
-      lastPrize = prizeConfig.find((p) => p.amount === 50);
-
-      const baseSpins = 4 + Math.floor(Math.random() * 3);
-      const fullRotation = baseSpins * 360;
-      const side = Math.random() < 0.5 ? -1 : 1;
-      const nearEdgeOffset = 20 + Math.random() * 8;
-      const targetRotation = fullRotation + side * nearEdgeOffset;
-
-      currentRotation = targetRotation;
-      wheelImage.style.transition = "transform 3.2s ease-out";
-      wheelImage.style.transform = "rotate(" + currentRotation + "deg)";
-
-      setTimeout(() => {
-        isSpinning = false;
-        if (!isTestMode()) {
-          spinBtn.disabled = true;
-        } else {
-          spinBtn.disabled = false;
-        }
-
-        const t2 = translations[currentLang];
-        const msg = t2.spin_status_win.replace("{amount}", lastPrize.label);
-        spinStatus.innerHTML = msg;
-
-        openModal();
-      }, 3300);
-    });
-
-    function openModal() {
-      if (!lastPrize) return;
-      const t = translations[currentLang];
-      modalPrizeText.textContent =
-        t.modal_subtitle_prefix + lastPrize.label + t.modal_subtitle_suffix;
-      modalBackdrop.style.display = "flex";
-      claimForm.reset();
-      document.body.classList.add("modal-open");
-    }
-
-    function closeModal() {
-      modalBackdrop.style.display = "none";
-      document.body.classList.remove("modal-open");
-    }
-
-    modalCloseBtn.addEventListener("click", closeModal);
-    cancelBtn.addEventListener("click", closeModal);
-
-    claimForm.addEventListener("submit", (e) => {
-      e.preventDefault();
-
-      if (!lastPrize) {
-        alert("System error. Please try again later.");
-        return;
-      }
-
-      pendingSubmitEventId = genEventId();
-
-      const regionSelect = claimForm.region;
-      const regionText =
-        regionSelect.options[regionSelect.selectedIndex].text.trim();
-
-      pendingFormData = {
-        prize: lastPrize ? lastPrize.label : "",
-        lastName: claimForm.lastName.value.trim(),
-        firstName: claimForm.firstName.value.trim(),
-        email: claimForm.email.value.trim(),
-        region: regionText,
-        phone: claimForm.phone.value.trim()
-      };
-
-      confirmBackdrop.style.display = "flex";
-    });
-
-    confirmEditBtn.addEventListener("click", () => {
-      pendingFormData = null;
-      pendingSubmitEventId = null;
-      confirmBackdrop.style.display = "none";
-    });
-
-    confirmOkBtn.addEventListener("click", () => {
-      if (!pendingFormData || !lastPrize) {
-        confirmBackdrop.style.display = "none";
-        return;
-      }
-
-      const submitEventId = pendingSubmitEventId || genEventId();
-      trackPixel("SubmitSpinForm", { event_id: submitEventId });
-      sendFbServerEvent("SubmitSpinForm", submitEventId, {
-        currency: "USD",
-        value: 0
-      });
-
-      const gForm = document.getElementById("gsheetForm");
-      gForm.elements["last_name"].value  = pendingFormData.lastName;
-      gForm.elements["first_name"].value = pendingFormData.firstName;
-      gForm.elements["email"].value      = pendingFormData.email;
-      gForm.elements["region"].value     = pendingFormData.region;
-      gForm.elements["phone"].value      = pendingFormData.phone;
-      gForm.elements["lang"].value       = currentLang;
-      gForm.elements["prize"].value      = pendingFormData.prize;
-      gForm.elements["user_agent"].value = getDeviceType();
-      gForm.elements["traffic_source"].value = getTrafficSource();
-
-      console.log("Claim form data (to sheet):", {
-        last_name: pendingFormData.lastName,
-        first_name: pendingFormData.firstName,
-        email: pendingFormData.email,
-        region: pendingFormData.region,
-        phone: pendingFormData.phone,
-        lang: currentLang,
-        prize: pendingFormData.prize,
-        user_agent: getDeviceType(),
-        traffic_source: getTrafficSource()
-      });
-
-      gForm.submit();
-
-      const t = translations[currentLang];
-      confirmBackdrop.style.display = "none";
-      closeModal();
-      showSuccessPopup(t.thankyou_message);
-      pendingFormData = null;
-      pendingSubmitEventId = null;
-    });
-
     function applyLanguage(lang) {
       currentLang = lang;
       saveLang(lang);
 
-      document.documentElement.lang =
-        lang === "en" ? "en" : "zh-Hant";
+      document.documentElement.lang = (lang === "en" ? "en" : "zh-Hant");
 
       const t = translations[lang];
       document.querySelectorAll("[data-i18n]").forEach((el) => {
@@ -1248,6 +1040,174 @@
       });
     });
 
+    /* ========= 成功視窗 ========= */
+    function showSuccessPopup(message) {
+      successText.textContent = message;
+      successBackdrop.style.display = "flex";
+    }
+
+    function hideSuccessPopup() {
+      successBackdrop.style.display = "none";
+    }
+
+    successOkBtn.addEventListener("click", hideSuccessPopup);
+
+    /* ========= 轉盤 ========= */
+    wheelCenter.addEventListener("click", () => {
+      spinBtn.click();
+    });
+
+    spinBtn.addEventListener("click", () => {
+      if (isSpinning) return;
+
+      if (!isTestMode() && hasSpun()) {
+        const t = translations[currentLang];
+        spinStatus.innerHTML = t.spin_used_message;
+        return;
+      }
+
+      if (!isTestMode()) {
+        markSpun();
+      }
+
+      const spinEventId = genEventId();
+      trackPixel("StartSpin", { event_id: spinEventId });
+      sendFbServerEvent("StartSpin", spinEventId, {});
+
+      isSpinning = true;
+      spinBtn.disabled = true;
+
+      const t = translations[currentLang];
+      spinStatus.textContent = t.spin_status_spinning;
+
+      // 這裡固定給 $50，大獎
+      lastPrize = prizeConfig.find((p) => p.amount === 50);
+
+      const baseSpins = 4 + Math.floor(Math.random() * 3);
+      const fullRotation = baseSpins * 360;
+      const side = Math.random() < 0.5 ? -1 : 1;
+      const nearEdgeOffset = 20 + Math.random() * 8;
+      const targetRotation = fullRotation + side * nearEdgeOffset;
+
+      currentRotation = targetRotation;
+      wheelImage.style.transition = "transform 3.2s ease-out";
+      wheelImage.style.transform = "rotate(" + currentRotation + "deg)";
+
+      setTimeout(() => {
+        isSpinning = false;
+        if (!isTestMode()) {
+          spinBtn.disabled = true;
+        } else {
+          spinBtn.disabled = false;
+        }
+
+        const t2 = translations[currentLang];
+        const msg = t2.spin_status_win.replace("{amount}", lastPrize.label);
+        spinStatus.innerHTML = msg;
+
+        openModal();
+      }, 3300);
+    });
+
+    /* ========= Modal 開關 ========= */
+    function openModal() {
+      if (!lastPrize) return;
+      const t = translations[currentLang];
+      modalPrizeText.textContent =
+        t.modal_subtitle_prefix + lastPrize.label + t.modal_subtitle_suffix;
+      modalBackdrop.style.display = "flex";
+      claimForm.reset();
+      document.body.classList.add("modal-open");
+    }
+
+    function closeModal() {
+      modalBackdrop.style.display = "none";
+      document.body.classList.remove("modal-open");
+    }
+
+    modalCloseBtn.addEventListener("click", closeModal);
+    cancelBtn.addEventListener("click", closeModal);
+
+    /* ========= 表單送出 ========= */
+    claimForm.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      if (!lastPrize) {
+        alert("System error. Please try again later.");
+        return;
+      }
+
+      pendingSubmitEventId = genEventId();
+
+      const regionSelect = claimForm.region;
+      const regionCode   = regionSelect.value;
+        regionSelect.options[regionSelect.selectedIndex].text.trim();
+
+      pendingFormData = {
+        prize: lastPrize ? lastPrize.label : "",
+        lastName: claimForm.lastName.value.trim(),
+        firstName: claimForm.firstName.value.trim(),
+        email: claimForm.email.value.trim(),
+        region: regionCode,
+        phone: claimForm.phone.value.trim()
+      };
+
+      confirmBackdrop.style.display = "flex";
+    });
+
+    confirmEditBtn.addEventListener("click", () => {
+      pendingFormData = null;
+      pendingSubmitEventId = null;
+      confirmBackdrop.style.display = "none";
+    });
+
+    confirmOkBtn.addEventListener("click", () => {
+      if (!pendingFormData || !lastPrize) {
+        confirmBackdrop.style.display = "none";
+        return;
+      }
+
+      const submitEventId = pendingSubmitEventId || genEventId();
+      trackPixel("SubmitSpinForm", { event_id: submitEventId });
+      sendFbServerEvent("SubmitSpinForm", submitEventId, {
+        currency: "USD",
+        value: 0
+      });
+
+      const gForm = document.getElementById("gsheetForm");
+      gForm.elements["last_name"].value      = pendingFormData.lastName;
+      gForm.elements["first_name"].value     = pendingFormData.firstName;
+      gForm.elements["email"].value          = pendingFormData.email;
+      gForm.elements["region"].value         = pendingFormData.region;
+      gForm.elements["phone"].value          = pendingFormData.phone;
+      gForm.elements["lang"].value           = currentLang;
+      gForm.elements["prize"].value          = pendingFormData.prize;
+      gForm.elements["traffic_source"].value = getTrafficSource();
+      gForm.elements["user_agent"].value     = getDeviceType();
+
+      console.log("Claim form data (to sheet):", {
+        last_name:      pendingFormData.lastName,
+        first_name:     pendingFormData.firstName,
+        email:          pendingFormData.email,
+        region:         pendingFormData.region,
+        phone:          pendingFormData.phone,
+        lang:           currentLang,
+        prize:          pendingFormData.prize,
+        traffic_source: getTrafficSource(),
+        user_agent:     getDeviceType()
+      });
+
+      gForm.submit();
+
+      const t = translations[currentLang];
+      confirmBackdrop.style.display = "none";
+      closeModal();
+      showSuccessPopup(t.thankyou_message);
+      pendingFormData = null;
+      pendingSubmitEventId = null;
+    });
+
+    /* ========= 初始化 ========= */
     const initialLang = loadLang();
     applyLanguage(initialLang);
     langButtons.forEach((btn) => {
