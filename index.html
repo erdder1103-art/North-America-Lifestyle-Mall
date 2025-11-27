@@ -747,8 +747,10 @@
       return window.location.search.indexOf("test=1") !== -1;
     }
 
-    /* ========= 來源 / 裝置偵測 ========= */
-    function getTrafficSource() {
+    /* ========= 來源 / 裝置偵測（帶清除網址參數） ========= */
+    const TRAFFIC_KEY = "lifamall_traffic_source";
+
+    function detectTrafficSourceFromUrl() {
       const params = new URLSearchParams(window.location.search);
       const from = (params.get("from") || params.get("src") || "").toLowerCase();
       const utmSource = (params.get("utm_source") || "").toLowerCase();
@@ -759,6 +761,41 @@
       if (utmSource === "facebook" && utmMedium === "cpc") return "廣告";
 
       return "自然量";
+    }
+
+    (function initTrafficSource() {
+      let saved = "";
+      try {
+        saved = localStorage.getItem(TRAFFIC_KEY) || "";
+      } catch (e) {}
+
+      const params = new URLSearchParams(window.location.search);
+      const hasTrackingParams =
+        params.has("from") ||
+        params.has("src") ||
+        params.has("utm_source") ||
+        params.has("utm_medium") ||
+        params.has("utm_campaign");
+
+      if (!saved) {
+        const detected = detectTrafficSourceFromUrl();
+        try {
+          localStorage.setItem(TRAFFIC_KEY, detected);
+        } catch (e) {}
+      }
+
+      if (hasTrackingParams) {
+        const cleanUrl = window.location.origin + window.location.pathname;
+        window.history.replaceState({}, "", cleanUrl);
+      }
+    })();
+
+    function getTrafficSource() {
+      try {
+        const v = localStorage.getItem(TRAFFIC_KEY);
+        if (v) return v;
+      } catch (e) {}
+      return detectTrafficSourceFromUrl();
     }
 
     function getDeviceType() {
@@ -831,9 +868,12 @@
     function buildRegionOptions(lang) {
       const select = document.getElementById("region");
       const current = select.value;
-      const placeholder = select.querySelector(
-        "option[data-i18n='form_region_placeholder']"
-      );
+      const placeholder = document.createElement("option");
+      placeholder.value = "";
+      placeholder.disabled = true;
+      placeholder.selected = true;
+      placeholder.setAttribute("data-i18n", "form_region_placeholder");
+
       select.innerHTML = "";
       select.appendChild(placeholder);
 
@@ -1140,8 +1180,7 @@
       pendingSubmitEventId = genEventId();
 
       const regionSelect = claimForm.region;
-      const regionCode   = regionSelect.value;
-        regionSelect.options[regionSelect.selectedIndex].text.trim();
+      const regionCode   = regionSelect.value;  // 傳縮寫給 Apps Script
 
       pendingFormData = {
         prize: lastPrize ? lastPrize.label : "",
@@ -1220,4 +1259,3 @@
   </script>
 </body>
 </html>
-
